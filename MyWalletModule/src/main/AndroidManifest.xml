@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.jsojs.mywalletmodule">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.SET_DEBUG_APP" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <application android:allowBackup="true"
+        android:windowSoftInputMode="adjustPan">
+        <activity android:name="com.jsojs.mywalletmodule.app.WithdrawActivity"
+            android:theme="@style/WhiteBarTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.SelectBindBankActivity"
+            android:theme="@style/WhiteBarTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.MyWalletActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.AddBindBankActivity"
+            android:theme="@style/WhiteBarTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.MyBindBankActivity"
+            android:theme="@style/WhiteBarTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.RechargeActivity"
+            android:theme="@style/WhiteBarTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.RechargePayActivity"
+            android:theme="@style/WhiteBarTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.WebViewActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.BankCardInfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.RechargeSuccessActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.jsojs.mywalletmodule.app.WithdrawSuccessActivity"
+            android:screenOrientation="portrait"/>
+    </application>
+
+</manifest>

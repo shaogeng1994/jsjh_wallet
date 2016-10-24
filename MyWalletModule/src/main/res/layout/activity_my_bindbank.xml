@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorGray">
+    <include layout="@layout/activity_my_bindbank_empty"/>
+    <ListView
+        android:id="@+id/my_bindbank_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:layout_marginBottom="@dimen/x40"
+        android:background="@color/colorGray"></ListView>
+    <LinearLayout
+        android:id="@+id/my_bindbank_addlayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x40"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:background="@color/colorWhite">
+        <ImageView
+            android:layout_width="@dimen/x15"
+            android:layout_height="@dimen/x15"
+            android:src="@mipmap/bank_add"
+            android:layout_marginRight="@dimen/x5"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlackText"
+            android:textSize="@dimen/middle_text_size"
+            android:text="添加银行卡"/>
+    </LinearLayout>
+</RelativeLayout>
