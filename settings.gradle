@@ -1,0 +1,2 @@
+include ':app', ':WalletModule'
+project(':WalletModule').projectDir = new File('MyWalletModule')

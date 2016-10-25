@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jsjh-1.1.8">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/MyWalletModule/build/intermediates/exploded-aar/com.github.shaogeng1994/jsjh/1.1.8/res" />
+      <root url="jar://$PROJECT_DIR$/MyWalletModule/build/intermediates/exploded-aar/com.github.shaogeng1994/jsjh/1.1.8/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
