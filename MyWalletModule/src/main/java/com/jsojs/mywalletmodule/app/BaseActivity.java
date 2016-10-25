@@ -1,5 +1,7 @@
 package com.jsojs.mywalletmodule.app;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.jsojs.baselibrary.myview.MyDialog;
 import com.jsojs.mywalletmodule.R;
 import com.jsojs.mywalletmodule.util.ActivityStack;
 
@@ -30,6 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static int SEARCH_ACTION_BAR = 1;
     public static int GOODS_INFO_ACTION_BAR = 2;
     public static int RED_ACTION_BAR = 3;
+    protected Dialog lodingDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +41,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         actionBarStyle = setActionBarStyle();
         Log.i("shao","actionbarnum->"+actionBarStyle);
         setActionbar();
+
+        lodingDialog = MyDialog.createLoadingDialog(this);
+        lodingDialog.hide();
         initContentView(savedInstanceState);
+
     }
 
     protected abstract void initContentView(Bundle savedInstanceState);
@@ -163,5 +171,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         if(optionImage!=null)optionImage.setBackgroundResource(reId);
     }
 
+
+    protected void tokenOut(){
+        Intent intent = new Intent("tokenError");
+        intent.putExtra("isTokenOut", true);
+        sendBroadcast(intent);
+    }
 
 }

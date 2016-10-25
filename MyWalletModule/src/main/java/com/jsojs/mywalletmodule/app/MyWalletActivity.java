@@ -6,9 +6,13 @@ import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jsojs.baselibrary.volley.MVolley;
 import com.jsojs.mywalletmodule.R;
+import com.jsojs.mywalletmodule.bean.WalletMsg;
+import com.jsojs.mywalletmodule.contract.WalletContract;
+import com.jsojs.mywalletmodule.presenter.WalletPresenter;
 import com.jsojs.mywalletmodule.util.ActivityStack;
 import com.jsojs.mywalletmodule.util.MyJson;
 import com.jsojs.mywalletmodule.util.MyToken;
@@ -21,10 +25,13 @@ import java.util.HashMap;
 /**
  * Created by Administrator on 2016/7/27.
  */
-public class MyWalletActivity extends BaseActivity {
+public class MyWalletActivity extends BaseActivity implements WalletContract.View{
+    public final static int REQUEST_WITHDRAW = 2000;
+    public final static int REQUEST_RECHARGE = 1000;
     private ActionBar actionBar;
     private TextView money1TV,money2TV,money3TV;
     private RelativeLayout outLayout,bankLayout,rechargeLayout;
+    private WalletContract.Presenter mPresenter;
 
     @Override
     public int setActionBarStyle() {
@@ -33,10 +40,11 @@ public class MyWalletActivity extends BaseActivity {
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
+        mPresenter = new WalletPresenter(this,this);
         setTitle("我的钱包");
         setContentView(R.layout.activity_my_wallet2);
         initView();
-        getMoney();
+        mPresenter.getWalletMsg();
     }
 
     @Override
@@ -65,7 +73,7 @@ public class MyWalletActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),RechargeActivity.class);
                 intent.putExtra("balance",money1TV.getText().toString());
-                startActivityForResult(intent,1000);
+                startActivityForResult(intent,REQUEST_RECHARGE);
             }
         });
         outLayout.setOnClickListener(new View.OnClickListener() {
@@ -73,32 +81,7 @@ public class MyWalletActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),WithdrawActivity.class);
                 intent.putExtra("balance",money1TV.getText().toString());
-                startActivityForResult(intent,2000);
-            }
-        });
-    }
-
-    private void getMoney(){
-//        String url = APIUrl.URL + "app/queryWallet";
-        HashMap<String,String> map = new HashMap<>();
-        map.put("token", MyToken.getMyToken(this));
-        map.put("action","queryWallet");
-        MVolley.getInstance(this).addRequest(APIUrl.URL, map, new MVolley.GetResponseLintener() {
-            @Override
-            public void getResponse(JSONObject jsonObject) {
-                try {
-                    String code = jsonObject.getString("code");
-                    if(code.equals("1")){
-                        JSONObject jsonObject1 = jsonObject.getJSONObject("data");
-                        money1TV.setText(jsonObject1.getString("TotalBalance"));
-                        money2TV.setText("￥"+jsonObject1.getString("TotalFreezeAmount"));
-                        money3TV.setText("￥"+jsonObject1.getString("TotalAmount"));
-                    }else {
-                        MyJson.getMsg(getApplicationContext(),jsonObject);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                startActivityForResult(intent,REQUEST_WITHDRAW);
             }
         });
     }
@@ -106,11 +89,11 @@ public class MyWalletActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode ==2000&&resultCode==2001){
-            getMoney();
+        if(requestCode == REQUEST_WITHDRAW && resultCode == 2001){
+            mPresenter.getWalletMsg();
         }
-        if(requestCode == 1000&&resultCode==1001){
-            getMoney();
+        if(requestCode == REQUEST_RECHARGE && resultCode == 1001){
+            mPresenter.getWalletMsg();
         }
     }
 
@@ -118,5 +101,32 @@ public class MyWalletActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         ActivityStack.getScreenManager().clearAllActivity();
+    }
+
+    @Override
+    public void showLoading() {
+        lodingDialog.show();
+    }
+
+    @Override
+    public void hideLoading() {
+        lodingDialog.hide();
+    }
+
+    @Override
+    public void showWalletMsg(WalletMsg walletMsg) {
+        money1TV.setText(walletMsg.getTotalBalance());
+        money2TV.setText("￥"+walletMsg.getTotalFreezeAmount());
+        money3TV.setText("￥"+walletMsg.getTotalAmount());
+    }
+
+    @Override
+    public void doTokenOut() {
+        tokenOut();
+    }
+
+    @Override
+    public void showToast(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }
 }

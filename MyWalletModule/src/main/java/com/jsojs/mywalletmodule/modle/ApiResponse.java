@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by root on 16-10-24.
  */
 
-public class Respone<T> implements Serializable {
+public class ApiResponse<T> implements Serializable {
     private String code;
     private T data;
     private T info;

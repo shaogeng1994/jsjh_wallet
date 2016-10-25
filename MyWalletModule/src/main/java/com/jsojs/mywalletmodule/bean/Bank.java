@@ -5,7 +5,7 @@ package com.jsojs.mywalletmodule.bean;
  */
 public class Bank {
     private String bankCode;
-    private String bankName;
+    private String name;
     private String cardType;
     private String dailylimit;
     private String id;
@@ -37,12 +37,12 @@ public class Bank {
         this.bankCode = bankCode;
     }
 
-    public String getBankName() {
-        return bankName;
+    public String getName() {
+        return name;
     }
 
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCardType() {
