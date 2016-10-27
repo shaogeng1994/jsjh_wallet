@@ -33,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static int SEARCH_ACTION_BAR = 1;
     public static int GOODS_INFO_ACTION_BAR = 2;
     public static int RED_ACTION_BAR = 3;
-    protected Dialog lodingDialog;
+    protected Dialog loadingDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +42,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         Log.i("shao","actionbarnum->"+actionBarStyle);
         setActionbar();
 
-        lodingDialog = MyDialog.createLoadingDialog(this);
-        lodingDialog.hide();
+        loadingDialog = MyDialog.createLoadingDialog(this);
+        loadingDialog.hide();
         initContentView(savedInstanceState);
 
     }

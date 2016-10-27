@@ -3,7 +3,6 @@ package com.jsojs.mywalletmodule.app;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,22 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.jsojs.baselibrary.volley.MVolley;
 import com.jsojs.mywalletmodule.R;
 import com.jsojs.mywalletmodule.bean.BindBank;
 import com.jsojs.mywalletmodule.bean.BindBankList;
 import com.jsojs.mywalletmodule.contract.MyBindBankContract;
 import com.jsojs.mywalletmodule.presenter.MyBindBankPresenter;
-import com.jsojs.mywalletmodule.util.MyJson;
-import com.jsojs.mywalletmodule.util.MyToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +24,8 @@ import java.util.Map;
  * Created by Administrator on 2016/7/27.
  */
 public class MyBindBankActivity extends BaseActivity implements MyBindBankContract.View{
+    public final static int REQUEST_ADDBANK = 1000;
+    public final static int REQUEST_INFO = 2000;
     private ListView listView;
     private LinearLayout addLayout;
     private ListViewAdapter listViewAdapter;
@@ -55,7 +45,7 @@ public class MyBindBankActivity extends BaseActivity implements MyBindBankContra
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),AddBindBankActivity.class);
-                startActivityForResult(intent,1000);
+                startActivityForResult(intent,REQUEST_ADDBANK);
             }
         });
     }
@@ -75,7 +65,7 @@ public class MyBindBankActivity extends BaseActivity implements MyBindBankContra
 
     @Override
     public void showLoading() {
-        lodingDialog.show();
+        loadingDialog.show();
     }
 
     @Override
@@ -85,7 +75,7 @@ public class MyBindBankActivity extends BaseActivity implements MyBindBankContra
 
     @Override
     public void hideLoading() {
-        lodingDialog.hide();
+        loadingDialog.hide();
     }
 
     @Override
@@ -100,7 +90,7 @@ public class MyBindBankActivity extends BaseActivity implements MyBindBankContra
                 BindBank bindBank = (BindBank) listViewAdapter.getItem(position);
                 intent.putExtra("position",position);
                 intent.putExtra("bank",bindBank);
-                startActivityForResult(intent,2000);
+                startActivityForResult(intent,REQUEST_INFO);
             }
         });
     }
@@ -167,9 +157,9 @@ public class MyBindBankActivity extends BaseActivity implements MyBindBankContra
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1000&&resultCode==1001){
+        if(requestCode == REQUEST_ADDBANK && resultCode == RESULT_OK){
             myBindBankPresenter.getBankList();
-        }else if(requestCode==2000&&resultCode==RESULT_OK){
+        }else if(requestCode == REQUEST_INFO && resultCode == RESULT_OK){
             int position = data.getIntExtra("position",-1);
             if(position!=-1){
                 listViewAdapter.removeData(position);

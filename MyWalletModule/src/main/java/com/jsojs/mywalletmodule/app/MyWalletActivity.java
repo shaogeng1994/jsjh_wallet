@@ -92,7 +92,7 @@ public class MyWalletActivity extends BaseActivity implements WalletContract.Vie
         if(requestCode == REQUEST_WITHDRAW && resultCode == 2001){
             mPresenter.getWalletMsg();
         }
-        if(requestCode == REQUEST_RECHARGE && resultCode == 1001){
+        if(requestCode == REQUEST_RECHARGE && resultCode == RESULT_OK){
             mPresenter.getWalletMsg();
         }
     }
@@ -101,16 +101,17 @@ public class MyWalletActivity extends BaseActivity implements WalletContract.Vie
     protected void onDestroy() {
         super.onDestroy();
         ActivityStack.getScreenManager().clearAllActivity();
+        mPresenter = null;
     }
 
     @Override
     public void showLoading() {
-        lodingDialog.show();
+        loadingDialog.show();
     }
 
     @Override
     public void hideLoading() {
-        lodingDialog.hide();
+        loadingDialog.hide();
     }
 
     @Override

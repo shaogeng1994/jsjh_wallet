@@ -5,6 +5,7 @@ import com.jsojs.mywalletmodule.bean.BankList;
 import com.jsojs.mywalletmodule.bean.BindBankList;
 import com.jsojs.mywalletmodule.bean.DateTime;
 import com.jsojs.mywalletmodule.bean.RechargeOrder;
+import com.jsojs.mywalletmodule.bean.SerialNo;
 import com.jsojs.mywalletmodule.bean.WalletMsg;
 
 /**
@@ -74,7 +75,10 @@ public interface WalletApi {
      */
     public final static String RECHARGE_ADD = "rechargeAdd";
 
-    public final static String RECHARGE_PAY = " rechargePay";
+    /**
+     * 查询充值订单
+     */
+    public final static String RECHARGE_PAY = "rechargePay";
     /**
      * 快捷支付验证码获取
      */
@@ -146,7 +150,7 @@ public interface WalletApi {
      * @param amount    提现金额
      * @param responseCallBack   回调监听
      */
-    public void withdrawalsCode(String token,String cardId,String amount,ResponseCallBack<String> responseCallBack);
+    public void withdrawalsCode(String token,String cardId,String amount,ResponseCallBack<SerialNo> responseCallBack);
 
     /**
      * @param token token
@@ -163,6 +167,13 @@ public interface WalletApi {
      * @param responseCallBack   回调监听
      */
     public void rechargeAdd(String token, String amount, ResponseCallBack<RechargeOrder> responseCallBack);
+
+    /**
+     * @param token token
+     * @param orderId   订单号
+     * @param responseCallBack  回调监听
+     */
+    public void rechargePay(String token,String orderId,ResponseCallBack<RechargeOrder> responseCallBack);
 
     /**
      * @param token token

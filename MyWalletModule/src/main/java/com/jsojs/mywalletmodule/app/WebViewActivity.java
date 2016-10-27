@@ -134,7 +134,7 @@ public class WebViewActivity extends BaseActivity {
             Log.i("shao", "onSumResult result=" + result);
             if(result==1){
                 Toast.makeText(getApplicationContext(), "支付成功", Toast.LENGTH_LONG).show();
-                setResult(1001);
+                setResult(RESULT_OK);
                 finish();
             }
         }

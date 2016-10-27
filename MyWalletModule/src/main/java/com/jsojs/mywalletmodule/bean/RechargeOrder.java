@@ -9,7 +9,43 @@ import java.util.List;
 public class RechargeOrder implements Serializable {
     private String order_id;
     private String bank_baseUrl;
+    private String orderNumber;
+    private String bind_mobile;
+    private String pay_amount;
     private List<QuickPayment> quick_payment;
+    private List<QuickPayment> parinfo;
+
+    public String getPay_amount() {
+        return pay_amount;
+    }
+
+    public void setPay_amount(String pay_amount) {
+        this.pay_amount = pay_amount;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public String getBind_mobile() {
+        return bind_mobile;
+    }
+
+    public void setBind_mobile(String bind_mobile) {
+        this.bind_mobile = bind_mobile;
+    }
+
+    public List<QuickPayment> getParinfo() {
+        return parinfo;
+    }
+
+    public void setParinfo(List<QuickPayment> parinfo) {
+        this.parinfo = parinfo;
+    }
 
     public String getOrder_id() {
         return order_id;

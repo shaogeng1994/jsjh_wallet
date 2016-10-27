@@ -10,20 +10,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jsojs.baselibrary.util.MyToast;
-import com.jsojs.baselibrary.volley.MVolley;
 import com.jsojs.mywalletmodule.R;
 import com.jsojs.mywalletmodule.bean.BindBank;
-import com.jsojs.mywalletmodule.util.MyJson;
-import com.jsojs.mywalletmodule.util.MyToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.jsojs.mywalletmodule.contract.WithdrawContract;
+import com.jsojs.mywalletmodule.presenter.WithdrawPresenter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,8 +24,10 @@ import java.util.TimerTask;
 /**
  * Created by Administrator on 2016/7/29.
  */
-public class WithdrawActivity extends BaseActivity {
-    private ArrayList<BindBank> mBindBanks;
+public class WithdrawActivity extends BaseActivity implements WithdrawContract.View {
+    public final static int REQUEST_ADDBANK = 2000;
+    public final static int REQUEST_SELECTBANK = 1000;
+    private List<BindBank> mBindBanks;
     private TextView bankNameTV,bankCardTV,getcodeTV,submitTV,mobileTV;
     private EditText amountET,codeET;
     private RelativeLayout bankLayout;
@@ -65,13 +60,15 @@ public class WithdrawActivity extends BaseActivity {
     private int position = 0;
     private TextView balanceTextView;
     private String amount = "";
+    private WithdrawContract.Presenter mPresenter;
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
+        mPresenter = new WithdrawPresenter(this,this);
         setTitle("提现");
         setContentView(R.layout.activity_withdraw);
         initView();
-        getBindBank();
+        mPresenter.getBindBank();
 
         if(getIntent().hasExtra("balance")){
             balanceTextView.setText(getIntent().getStringExtra("balance")+"元");
@@ -97,30 +94,18 @@ public class WithdrawActivity extends BaseActivity {
         getcodeTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(amountET.getText().toString().equals("")){
-                    MyToast.makeToast(getApplicationContext(),"请输入金额");
-                }else if(bankNameTV.getText().toString().equals("")){
-                    MyToast.makeToast(getApplicationContext(),"请选择银行卡");
-                }else {
-                    getCode();
-                }
+                mPresenter.getCode(mBindBanks.get(position).getId(),amountET.getText().toString());
             }
         });
         submitTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(serialNo==null){
-                    MyToast.makeToast(getApplicationContext(),"请先获取验证码");
-                }else if(codeET.getText().toString().equals("")){
-                    MyToast.makeToast(getApplicationContext(),"请输入验证码");
-                }else{
-                    if(amountET.getText().toString().equals(amount)){
-                        submit();
-                    }else {
-                        Toast.makeText(getApplicationContext(),"修改金额后，请重新获取验证码",Toast.LENGTH_SHORT).show();
-                    }
-
+                if(amountET.getText().toString().equals(amount)){
+                    mPresenter.withdraw(mBindBanks.get(position).getId(),serialNo,codeET.getText().toString());
+                }else {
+                    Toast.makeText(getApplicationContext(),"修改金额后，请重新获取验证码",Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
         bankLayout.setOnClickListener(new View.OnClickListener() {
@@ -128,51 +113,7 @@ public class WithdrawActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(WithdrawActivity.this,SelectBindBankActivity.class);
                 intent.putExtra("banks",(Serializable)mBindBanks);
-                startActivityForResult(intent,1000);
-            }
-        });
-    }
-
-    private void getBindBank(){
-//        String url = APIUrl.URL + "app/queryBindBankList";
-        HashMap<String,String> map = new HashMap<>();
-        map.put("token", MyToken.getMyToken(this));
-        map.put("action","queryBindBankList");
-        MVolley.getInstance(this).addRequest(APIUrl.URL, map, new MVolley.GetResponseLintener() {
-            @Override
-            public void getResponse(JSONObject jsonObject) {
-                try {
-                    String code = jsonObject.getString("code");
-                    if(code.equals("1")){
-                        JSONObject jsonObject1 = jsonObject.getJSONObject("data");
-                        JSONArray jsonArray = jsonObject1.getJSONArray("bank");
-                        ArrayList<BindBank> bindBanks = new ArrayList<BindBank>();
-                        for(int i=0;i<jsonArray.length();i++){
-                            BindBank bindBank = new BindBank();
-                            JSONObject  jsonObject2 = jsonArray.getJSONObject(i);
-                            bindBank.setBankname(jsonObject2.getString("bankname"));
-                            bindBank.setBankcard(jsonObject2.getString("bankcard"));
-                            bindBank.setMobile(jsonObject2.getString("mobile"));
-                            bindBank.setId(jsonObject2.getString("id"));
-                            bindBanks.add(bindBank);
-                        }
-                        mBindBanks = bindBanks;
-                        bankNameTV.setText(mBindBanks.get(position).getBankname());
-                        String card = mBindBanks.get(position).getBankcard();
-                        String cardEnd = "尾号"+card.substring(card.length()-4,card.length());
-                        bankCardTV.setText(cardEnd);
-                        mobileTV.setText(mBindBanks.get(position).getMobile());
-
-                    }else if(code.equals("2")){
-                        MyToast.makeToast(getApplicationContext(),jsonObject.getString("msg"));
-                        Intent intent = new Intent(WithdrawActivity.this,AddBindBankActivity.class);
-                        startActivityForResult(intent,2000);
-                    }else {
-                        MyJson.getMsg(getApplicationContext(),jsonObject);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                startActivityForResult(intent,REQUEST_SELECTBANK);
             }
         });
     }
@@ -186,76 +127,69 @@ public class WithdrawActivity extends BaseActivity {
             }
         };
         timer = new Timer();
-        timer.schedule(task,1000, 1000);
+        timer.schedule(task,0, 1000);
     }
 
-    private void getCode(){
-//        String url = APIUrl.URL + "app/withdrawalsCode";
-        HashMap<String,String> map = new HashMap<>();
-        map.put("token",MyToken.getMyToken(this));
-        map.put("action","withdrawalsCode");
-        map.put("cardId",mBindBanks.get(position).getId());
-        map.put("amount",amountET.getText().toString());
-        MVolley.getInstance(this).addRequest(APIUrl.URL, map, new MVolley.GetResponseLintener() {
-            @Override
-            public void getResponse(JSONObject jsonObject) {
-                try {
-                    String code = jsonObject.getString("code");
-                    if(code.equals("1")){
-                        MyToast.makeToast(getApplicationContext(),"发送成功");
-                        amount = amountET.getText().toString();
-                        serialNo = jsonObject.getJSONObject("data").getString("serialNo");
-                        setTimer();
 
-                    }else{
-                        MyJson.getMsg(getApplicationContext(),jsonObject);
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void submit(){
-//        String url = APIUrl.URL + "app/withdrawals";
-        HashMap<String,String> map = new HashMap<>();
-        map.put("token",MyToken.getMyToken(this));
-        map.put("action","withdrawals");
-        map.put("cardId",mBindBanks.get(position).getId());
-        map.put("serialNo",serialNo);
-        map.put("smsCode",codeET.getText().toString());
-        MVolley.getInstance(this).addRequest(APIUrl.URL, map, new MVolley.GetResponseLintener() {
-            @Override
-            public void getResponse(JSONObject jsonObject) {
-                try {
-                    String code = jsonObject.getString("code");
-                    if(code.equals("1")){
-                        withdrawSuccess();
-                    }else{
-                        MyJson.getMsg(getApplicationContext(),jsonObject);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1000&&resultCode==1001){
+        if(requestCode == REQUEST_SELECTBANK &&resultCode == RESULT_OK){
             position = data.getIntExtra("position",0);
-            getBindBank();
+            mPresenter.getBindBank();
             serialNo = null;
-        }else if(requestCode==2000&&resultCode==1001){
-            getBindBank();
+        }else if(requestCode == REQUEST_ADDBANK && resultCode == RESULT_OK){
+            mPresenter.getBindBank();
         }
     }
 
-    private void withdrawSuccess(){
+    @Override
+    public void showLoading() {
+        loadingDialog.show();
+    }
+
+    @Override
+    public void hideLoading() {
+        loadingDialog.hide();
+    }
+
+    @Override
+    public void showToast(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void doTokenOut() {
+        tokenOut();
+    }
+
+    @Override
+    public void getBankSuccess(List<BindBank> bindBanks) {
+        this.mBindBanks = bindBanks;
+        bankNameTV.setText(bindBanks.get(position).getBankname());
+        String card = bindBanks.get(position).getBankcard();
+        String cardEnd = "尾号"+card.substring(card.length()-4,card.length());
+        bankCardTV.setText(cardEnd);
+        mobileTV.setText(bindBanks.get(position).getMobile());
+    }
+
+    @Override
+    public void toAddBindBank() {
+        showToast("没有绑定银行卡，请先绑定");
+        Intent intent = new Intent(WithdrawActivity.this,AddBindBankActivity.class);
+        startActivityForResult(intent,REQUEST_ADDBANK);
+    }
+
+    @Override
+    public void getCodeSuccess(String serialNo) {
+        this.amount = amountET.getText().toString();
+        this.serialNo = serialNo;
+        setTimer();
+    }
+
+    @Override
+    public void withdrawSuccess() {
         setResult(2001);
         Intent intent = new Intent(this,WithdrawSuccessActivity.class);
         intent.putExtra("name",bankNameTV.getText().toString());
@@ -265,4 +199,8 @@ public class WithdrawActivity extends BaseActivity {
         finish();
     }
 
+    @Override
+    public void getBankFailure() {
+        finish();
+    }
 }

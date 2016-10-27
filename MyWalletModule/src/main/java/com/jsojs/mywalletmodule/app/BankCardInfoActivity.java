@@ -6,20 +6,15 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
-import com.jsojs.baselibrary.util.MyToast;
-import com.jsojs.baselibrary.volley.MVolley;
 import com.jsojs.mywalletmodule.R;
 import com.jsojs.mywalletmodule.bean.BindBank;
-import com.jsojs.mywalletmodule.util.MyJson;
-import com.jsojs.mywalletmodule.util.MyToken;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.jsojs.mywalletmodule.contract.BankCardInfoContract;
+import com.jsojs.mywalletmodule.presenter.BankCardInfoPresenter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,17 +24,18 @@ import java.util.Map;
  * Created by root on 16-10-20.
  */
 
-public class BankCardInfoActivity extends BaseActivity {
+public class BankCardInfoActivity extends BaseActivity implements BankCardInfoContract.View {
     private BindBank bindBank;
-    private TextView bankNameTextView,bankCardTextView,mobileTextView,getCodeTextView;
+    private TextView bankNameTextView,bankCardTextView;
     private Button submitButton;
-    private EditText codeEditView;
     private LinearLayout linearLayout;
     private Map<String,Integer> map = new HashMap<>();
+    private BankCardInfoContract.Presenter mPresenter;
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
-        pushBankImg();
+        mPresenter = new BankCardInfoPresenter(this,this);
+        mPresenter.getBankImg();
         if(getIntent().hasExtra("bank")){
             bindBank = (BindBank) getIntent().getSerializableExtra("bank");
         }else{
@@ -53,10 +49,7 @@ public class BankCardInfoActivity extends BaseActivity {
     private void initView(){
         bankNameTextView = (TextView) findViewById(R.id.bindbank_item_bankname);
         bankCardTextView = (TextView) findViewById(R.id.bindbank_item_bankcard);
-//        mobileTextView = (TextView) findViewById(R.id.bankcard_info_mobile);
-//        getCodeTextView = (TextView) findViewById(R.id.bankcard_info_getcode);
         submitButton = (Button) findViewById(R.id.bankcard_info_submit);
-//        codeEditView = (EditText) findViewById(R.id.bankcard_info_code);
         linearLayout = (LinearLayout) findViewById(R.id.bindbank_item_layout);
 
         bankNameTextView.setText(bindBank.getBankname());
@@ -72,7 +65,7 @@ public class BankCardInfoActivity extends BaseActivity {
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        removeBind();
+                        mPresenter.removeBank(bindBank.getId());
                     }
                 });
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -87,30 +80,6 @@ public class BankCardInfoActivity extends BaseActivity {
         });
     }
 
-
-    private void removeBind(){
-//            String url = APIUrl.URL + "app/delBindBank";
-        HashMap<String,String> map = new HashMap<>();
-        map.put("token", MyToken.getMyToken(this));
-        map.put("action","delBindBank");
-        map.put("id",bindBank.getId());
-        MVolley.getInstance(this).addRequest(APIUrl.URL, map, new MVolley.GetResponseLintener() {
-            @Override
-            public void getResponse(JSONObject jsonObject) {
-                try {
-                    String code = jsonObject.getString("code");
-                    if (code.equals("1")){
-                        MyToast.makeToast(getApplicationContext(),"解绑成功");
-                        removeSuccess();
-                    }else{
-                        MyJson.getMsg(getApplicationContext(),jsonObject);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 
     private void removeSuccess() {
         setContentView(R.layout.activity_add_bindbank_success);
@@ -129,26 +98,40 @@ public class BankCardInfoActivity extends BaseActivity {
         });
     }
 
-    private void pushBankImg(){
-        map.put("工商银行",R.mipmap.bank_icbc);
-        map.put("农业银行",R.mipmap.bank_abc);
-        map.put("中国银行",R.mipmap.bank_boc);
-        map.put("建设银行",R.mipmap.bank_ccb);
-        map.put("交通银行",R.mipmap.bank_bcm);
-        map.put("招商银行",R.mipmap.bank_cmb);
-        map.put("中信银行",R.mipmap.bank_citic);
-        map.put("平安银行",R.mipmap.bank_pab);
-        map.put("兴业银行",R.mipmap.bank_cib);
-        map.put("浦发银行",R.mipmap.bank_psdb);
-        map.put("光大银行",R.mipmap.bank_ceb);
-        map.put("民生银行",R.mipmap.bank_cmbc);
-        map.put("邮政储蓄银行",R.mipmap.bank_psb);
-        map.put("北京银行",R.mipmap.bank_bob);
-        map.put("上海银行",R.mipmap.bank_bos);
-    }
+
 
     @Override
     protected void onBack() {
         finish();
+    }
+
+    @Override
+    public void showLoading() {
+        loadingDialog.show();
+    }
+
+    @Override
+    public void hideLoading() {
+        loadingDialog.hide();
+    }
+
+    @Override
+    public void showToast(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void removeBankSuccess() {
+        removeSuccess();
+    }
+
+    @Override
+    public void doTokenOut() {
+        tokenOut();
+    }
+
+    @Override
+    public void bankImg(Map<String, Integer> map) {
+        this.map = map;
     }
 }

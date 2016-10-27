@@ -59,7 +59,7 @@ public class SelectBindBankActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent();
                 intent.putExtra("position",position);
-                setResult(1001,intent);
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });

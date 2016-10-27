@@ -178,12 +178,12 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
 
     @Override
     public void showLoading() {
-        lodingDialog.show();
+        loadingDialog.show();
     }
 
     @Override
     public void hideLoading() {
-        lodingDialog.hide();
+        loadingDialog.hide();
     }
 
     @Override
@@ -224,7 +224,7 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
         setContentView(R.layout.activity_add_bindbank_success);
         setTitle("绑定成功");
         setOption("完成");
-        setResult(1001);
+        setResult(RESULT_OK);
         setOnClickOptionListener(new OnClickOptionListener() {
             @Override
             public void onClickOption() {

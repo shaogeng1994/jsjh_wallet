@@ -6,32 +6,29 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
-import com.jsojs.baselibrary.util.MyToast;
-import com.jsojs.baselibrary.volley.MVolley;
 import com.jsojs.mywalletmodule.R;
-import com.jsojs.mywalletmodule.util.MyJson;
-import com.jsojs.mywalletmodule.util.MyToken;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
+import com.jsojs.mywalletmodule.bean.RechargeOrder;
+import com.jsojs.mywalletmodule.contract.RechargeContract;
+import com.jsojs.mywalletmodule.presenter.RechargePresenter;
 
 
 /**
  * Created by Administrator on 2016/7/28.
  */
-public class RechargeActivity extends BaseActivity {
+public class RechargeActivity extends BaseActivity implements RechargeContract.View {
+    private final static int REQUEST_FOR_RECHARGEPAY = 1000;
     private RadioButton radioButton1,radioButton2,radioButton3;
     private EditText amountET;
     private TextView submitTV;
-    private String orderId;
     private TextView balanceTextView;
+    private RechargeContract.Presenter mPresenter;
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
+        mPresenter = new RechargePresenter(this,this);
         setTitle("账户充值");
         setContentView(R.layout.activity_recharge);
         initView();
@@ -59,38 +56,7 @@ public class RechargeActivity extends BaseActivity {
         submitTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!amountET.getText().toString().equals("")){
-                    subPay();
-                }else{
-                    MyToast.makeToast(getApplicationContext(),"填写金额");
-                }
-            }
-        });
-    }
-
-    private void subPay(){
-//        String url = APIUrl.URL + "app/rechargeAdd";
-        HashMap<String,String> map = new HashMap<>();
-        map.put("token", MyToken.getMyToken(this));
-        map.put("action","rechargeAdd");
-        map.put("amount",amountET.getText().toString());
-        MVolley.getInstance(this).addRequest(APIUrl.URL, map, new MVolley.GetResponseLintener() {
-            @Override
-            public void getResponse(JSONObject jsonObject) {
-                try {
-                    String code = jsonObject.getString("code");
-                    if(code.equals("1")){
-                        JSONObject jsonObject1 = jsonObject.getJSONObject("data");
-                        orderId = jsonObject1.getString("order_id");
-                        Intent intent = new Intent(getApplicationContext(),RechargePayActivity.class);
-                        intent.putExtra("id",orderId);
-                        intent.putExtra("check",getCheck());
-                        startActivityForResult(intent,1000);
-                    }else MyJson.getMsg(getApplicationContext(),jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
+                mPresenter.submitOrder(amountET.getText().toString());
             }
         });
     }
@@ -105,10 +71,37 @@ public class RechargeActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1000&&resultCode==1001){
-            setResult(1001);
+        if(requestCode == REQUEST_FOR_RECHARGEPAY && resultCode == RESULT_OK){
+            setResult(RESULT_OK);
             finish();
         }
     }
 
+    @Override
+    public void showLoading() {
+        loadingDialog.show();
+    }
+
+    @Override
+    public void hideLoading() {
+        loadingDialog.hide();
+    }
+
+    @Override
+    public void showToast(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void doTokenOut() {
+        tokenOut();
+    }
+
+    @Override
+    public void submitSuccess(RechargeOrder rechargeOrder) {
+        Intent intent = new Intent(getApplicationContext(),RechargePayActivity.class);
+        intent.putExtra("id",rechargeOrder.getOrder_id());
+        intent.putExtra("check",getCheck());
+        startActivityForResult(intent,REQUEST_FOR_RECHARGEPAY);
+    }
 }

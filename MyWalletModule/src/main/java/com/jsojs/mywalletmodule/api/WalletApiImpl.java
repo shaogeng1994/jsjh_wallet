@@ -18,14 +18,12 @@ import com.jsojs.mywalletmodule.bean.BankList;
 import com.jsojs.mywalletmodule.bean.BindBankList;
 import com.jsojs.mywalletmodule.bean.DateTime;
 import com.jsojs.mywalletmodule.bean.RechargeOrder;
+import com.jsojs.mywalletmodule.bean.SerialNo;
 import com.jsojs.mywalletmodule.bean.WalletConfig;
 import com.jsojs.mywalletmodule.bean.WalletMsg;
 import com.jsojs.mywalletmodule.modle.ApiResponse;
 import com.jsojs.mywalletmodule.util.MyLog;
 import com.jsojs.mywalletmodule.util.WalletManager;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -240,22 +238,24 @@ public class WalletApiImpl implements WalletApi {
     }
 
     @Override
-    public void withdrawalsCode(String token, String cardId, String amount, final ResponseCallBack<String> responseCallBack) {
+    public void withdrawalsCode(String token, String cardId, String amount, final ResponseCallBack<SerialNo> responseCallBack) {
 
         final HashMap<String,String> map = getCommonMap();
         map.put("action",WITHDRAWALS_CODE);
         map.put("token",token);
+        map.put("cardId",cardId);
+        map.put("amount",amount);
         StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                ApiResponse<String> response = JSON.parseObject(s,new TypeReference<ApiResponse<String>>(){});
-                JSONObject jsonObject;
-                try {
-                    jsonObject = new JSONObject(s);
-                    response.setData(jsonObject.getString("serialNo"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                ApiResponse<SerialNo> response = JSON.parseObject(s,new TypeReference<ApiResponse<SerialNo>>(){});
+//                JSONObject jsonObject;
+//                try {
+//                    jsonObject = new JSONObject(s);
+//                    response.setData(jsonObject.getString("serialNo"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
                 responseCallBack.callBack(response);
             }
         }, new Response.ErrorListener() {
@@ -332,6 +332,33 @@ public class WalletApiImpl implements WalletApi {
     }
 
     @Override
+    public void rechargePay(String token, String orderId, final ResponseCallBack<RechargeOrder> responseCallBack) {
+        final HashMap<String,String> map = getCommonMap();
+        map.put("action",RECHARGE_PAY);
+        map.put("token",token);
+        map.put("orderId",orderId);
+        StringRequest request = new StringRequest(REQUEST_METHOD, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                ApiResponse<RechargeOrder> response = JSON.parseObject(s,new TypeReference<ApiResponse<RechargeOrder>>(){});
+                responseCallBack.callBack(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                getRequestError(error,responseCallBack);
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return map;
+            }
+        };
+        addToRequest(request);
+        MyLog.showLog("api",RECHARGE_PAY);
+    }
+
+    @Override
     public void rechargePabCode(String token, String orderNumber, String bindId, String bankCode, final ResponseCallBack<DateTime> responseCallBack) {
 
         final HashMap<String,String> map = getCommonMap();
@@ -403,8 +430,13 @@ public class WalletApiImpl implements WalletApi {
         StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                ApiResponse<String> response = JSON.parseObject(s,new TypeReference<ApiResponse<String>>(){});
-                if(!response.getCode().equals("2"))response.setData(s);
+                ApiResponse<String> response = new ApiResponse<>();
+                if(s.startsWith("{")&&s.endsWith("}")){
+                    response = JSON.parseObject(s,new TypeReference<ApiResponse<String>>(){});
+                }else {
+                    response.setCode("1");
+                    response.setData(s);
+                }
                 responseCallBack.callBack(response);
             }
         }, new Response.ErrorListener() {
