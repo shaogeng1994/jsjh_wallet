@@ -22,7 +22,7 @@ import com.jsojs.mywalletmodule.util.WalletManager;
 public class MainActivity extends AppCompatActivity {
     private Button button,button2;
     private WalletApi mWalletApi;
-    private String token = "93d05a70dbe781ea9fa71346b43e8db1c12b55";
+    private String token = "484039123ad37e8287eaa396a17558d7705b13";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

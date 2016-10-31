@@ -60,11 +60,13 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
                 case 1:
                     if(second == WAIT_TIME){
                         getCodeTV.setBackgroundResource(R.drawable.shape_corner_btn_disable);
+                        getCodeTV.setClickable(false);
                     }
                     getCodeTV.setText(second+"");
                     second--;
                     if(second == -1){
                         getCodeTV.setBackgroundResource(R.drawable.shape_corner_btn_red);
+                        getCodeTV.setClickable(true);
                         getCodeTV.setText("获取验证码");
                         second = WAIT_TIME;
                         timer.cancel();
@@ -182,7 +184,7 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
             }
         };
         timer = new Timer();
-        timer.schedule(task,1000, 1000);
+        timer.schedule(task,0, 1000);
     }
 
 

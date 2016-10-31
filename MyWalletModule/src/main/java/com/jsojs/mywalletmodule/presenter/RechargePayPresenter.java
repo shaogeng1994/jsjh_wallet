@@ -68,13 +68,13 @@ public class RechargePayPresenter implements RechargePayContract.Presenter {
     @Override
     public void checkPayMode(int i) {
         switch (i){
-            case 0:
+            case 1:
                 view.doQuickPay();
                 return;
-            case 1:
+            case 2:
                 view.doOnlinePay();
                 return;
-            case 2:
+            case 3:
                 view.doOnlinePay();
                 return;
         }

@@ -40,11 +40,13 @@ public class WithdrawActivity extends BaseActivity implements WithdrawContract.V
                 case 1:
                     if(second == WAIT_TIME){
                         getcodeTV.setBackgroundResource(R.drawable.shape_corner_btn_disable);
+                        getcodeTV.setClickable(false);
                     }
                     getcodeTV.setText(second+"");
                     second--;
                     if(second == -1){
                         getcodeTV.setBackgroundResource(R.drawable.shape_corner_btn_red);
+                        getcodeTV.setClickable(true);
                         getcodeTV.setText("获取验证码");
                         second = WAIT_TIME;
                         timer.cancel();
