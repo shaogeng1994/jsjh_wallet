@@ -329,7 +329,7 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
                 viewHolder.nameTV = (TextView) convertView.findViewById(R.id.bank_item_name);
                 viewHolder.singlequotaTV = (TextView) convertView.findViewById(R.id.bank_item_singlequota);
                 viewHolder.typeTV = (TextView) convertView.findViewById(R.id.bank_item_type);
-                viewHolder.bankImg = (NetworkImageView) convertView.findViewById(R.id.bank_item_img);
+                viewHolder.bankImg = (ImageView) convertView.findViewById(R.id.bank_item_img);
                 convertView.setTag(viewHolder);
             }else{
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -339,16 +339,15 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
             viewHolder.typeTV.setText(quickPayment.getCardtype());
             viewHolder.singlequotaTV.setText(quickPayment.getSinglequota());
             viewHolder.nameTV.setText(quickPayment.getBankname());
-            viewHolder.bankImg.setDefaultImageResId(R.color.colorGray);
             if(!bankUrl.equals("")){
-                viewHolder.bankImg.setImageUrl(bankUrl+quickPayment.getBankcode()+".jpg",MVolley.getInstance(context).getImageLoader());
+                MVolley.getInstance(context).loadImageByVolley(viewHolder.bankImg,bankUrl+quickPayment.getBankcode()+".jpg");
             }
             return convertView;
         }
 
         private class ViewHolder{
             public TextView nameTV,typeTV,dailylimitTV,singlequotaTV;
-            public NetworkImageView bankImg;
+            public ImageView bankImg;
         }
     }
 

@@ -7,21 +7,11 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.jsojs.baselibrary.volley.MVolley;
 import com.jsojs.mywalletmodule.R;
 import com.jsojs.mywalletmodule.bean.WalletMsg;
 import com.jsojs.mywalletmodule.contract.WalletContract;
 import com.jsojs.mywalletmodule.presenter.WalletPresenter;
 import com.jsojs.mywalletmodule.util.ActivityStack;
-import com.jsojs.mywalletmodule.util.MyJson;
-import com.jsojs.mywalletmodule.util.MyToken;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-
 /**
  * Created by Administrator on 2016/7/27.
  */
