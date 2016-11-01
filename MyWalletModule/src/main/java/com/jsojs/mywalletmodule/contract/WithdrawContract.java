@@ -19,11 +19,12 @@ public interface WithdrawContract {
         void getCodeSuccess(String serialNo);
         void withdrawSuccess();
         void getBankFailure();
+        void getBankImgSuccess(int bankImg);
     }
     interface Presenter {
         void getBindBank();
         void getCode(String cardId,String amount);
         void withdraw(String cardId, String serialNo, String smsCode);
-
+        void getBankImg(String bankName);
     }
 }

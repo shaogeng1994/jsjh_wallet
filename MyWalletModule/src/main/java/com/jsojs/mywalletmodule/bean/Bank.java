@@ -12,6 +12,15 @@ public class Bank {
     private String singlequota;
     private String bankUrl;
     private String code;
+    private String bankname;
+
+    public String getBankname() {
+        return bankname;
+    }
+
+    public void setBankname(String bankname) {
+        this.bankname = bankname;
+    }
 
     public String getCode() {
         return code;

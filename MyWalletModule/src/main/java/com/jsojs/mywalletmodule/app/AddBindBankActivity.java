@@ -41,6 +41,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -86,6 +87,7 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
     private View bottomView;
     private ListView bottomListView;
     private AddBindBankPresenter mAddBindBankPresenter;
+    private Map<String,Integer> map = new HashMap<>();
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
@@ -94,6 +96,7 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
         setContentView(R.layout.activity_add_bindbank);
         initView();
         mAddBindBankPresenter.getBankList();
+        mAddBindBankPresenter.getBankImg();
     }
 
     @Override
@@ -173,7 +176,7 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
             }
         };
         timer = new Timer();
-        timer.schedule(task,1000, 1000);
+        timer.schedule(task,0, 1000);
     }
 
     @Override
@@ -202,7 +205,7 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bank bank = (Bank) listViewAdapter.getItem(position);
                 bankTV.setText(bank.getName());
-                bankCode = bank.getBankCode();
+                bankCode = bank.getCode();
                 bottomSheetLayout.dismissSheet();
             }
         });
@@ -233,6 +236,11 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
         });
     }
 
+    @Override
+    public void getBankImgSuccess(Map banks) {
+        this.map = banks;
+    }
+
     private class ListViewAdapter extends BaseAdapter{
         private Context context;
         private List<Bank> banks;
@@ -260,15 +268,29 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.bank_bottomsheet_item,null);
-            TextView textView = (TextView) convertView.findViewById(R.id.bank_bottomsheet_itemname);
-            NetworkImageView networkImageView = (NetworkImageView) convertView.findViewById(R.id.bank_bottomsheet_itemimg);
-            textView.setText(banks.get(position).getName());
-            networkImageView.setDefaultImageResId(R.color.colorGray);
-            if(!banks.get(position).getBankUrl().equals("")||banks.get(position).getBankUrl()!=null){
-                networkImageView.setImageUrl(banks.get(position).getBankUrl(),MVolley.getInstance(context).getImageLoader());
+//            convertView = LayoutInflater.from(context).inflate(R.layout.bank_bottomsheet_item,null);
+//            TextView textView = (TextView) convertView.findViewById(R.id.bank_bottomsheet_itemname);
+//            NetworkImageView networkImageView = (NetworkImageView) convertView.findViewById(R.id.bank_bottomsheet_itemimg);
+//            textView.setText(banks.get(position).getName());
+//            networkImageView.setDefaultImageResId(R.color.colorGray);
+//            if(!banks.get(position).getBankUrl().equals("")||banks.get(position).getBankUrl()!=null){
+//                networkImageView.setImageUrl(banks.get(position).getBankUrl(),MVolley.getInstance(context).getImageLoader());
+//            }
+            Holder holder;
+            if(convertView==null) {
+                holder = new Holder();
+                convertView = LayoutInflater.from(context).inflate(R.layout.bind_bank_img_item,null);
+                holder.imageView = (ImageView) convertView.findViewById(R.id.bind_bank_img_item_img);
+                convertView.setTag(holder);
+            }else {
+                holder = (Holder) convertView.getTag();
             }
+            holder.imageView.setBackgroundResource(map.get(banks.get(position).getName()));
             return convertView;
+        }
+
+        private class Holder {
+            ImageView imageView;
         }
     }
 }

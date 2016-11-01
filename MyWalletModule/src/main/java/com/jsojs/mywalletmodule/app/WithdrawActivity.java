@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,7 @@ public class WithdrawActivity extends BaseActivity implements WithdrawContract.V
     private TextView balanceTextView;
     private String amount = "";
     private WithdrawContract.Presenter mPresenter;
+    private ImageView bankImageView;
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
@@ -92,6 +94,7 @@ public class WithdrawActivity extends BaseActivity implements WithdrawContract.V
         bankLayout = (RelativeLayout) findViewById(R.id.withdraw_layout);
         mobileTV = (TextView) findViewById(R.id.withdraw_mobile);
         balanceTextView = (TextView) findViewById(R.id.withdraw_balance);
+        bankImageView = (ImageView) findViewById(R.id.withdraw_bankimg);
 
         getcodeTV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +177,7 @@ public class WithdrawActivity extends BaseActivity implements WithdrawContract.V
         String cardEnd = "尾号"+card.substring(card.length()-4,card.length());
         bankCardTV.setText(cardEnd);
         mobileTV.setText(bindBanks.get(position).getMobile());
+        mPresenter.getBankImg(bindBanks.get(position).getBankname());
     }
 
     @Override
@@ -204,5 +208,10 @@ public class WithdrawActivity extends BaseActivity implements WithdrawContract.V
     @Override
     public void getBankFailure() {
         finish();
+    }
+
+    @Override
+    public void getBankImgSuccess(int bankImg) {
+        bankImageView.setBackgroundResource(bankImg);
     }
 }

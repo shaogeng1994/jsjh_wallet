@@ -4,6 +4,7 @@ import com.jsojs.mywalletmodule.bean.QuickPayment;
 import com.jsojs.mywalletmodule.bean.RechargeOrder;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by root on 16-10-26.
@@ -24,6 +25,7 @@ public interface RechargePayContract {
         void selectBindBank(QuickPayment quickPayment);
         void noBindBank();
         void getOrderFailure();
+        void getBankImgSuccess(Map banks);
     }
     interface Presenter {
         void getCode(String orderNumber, String bindId, String bankCode);
@@ -32,5 +34,6 @@ public interface RechargePayContract {
         void quickPay(String orderNumber, String bindId, String dateTime, String phoneCode);
         void onlinePay(String orderNumber, String plantBankId);
         void PayOrder(String orderId);
+        void getBankImg();
     }
 }

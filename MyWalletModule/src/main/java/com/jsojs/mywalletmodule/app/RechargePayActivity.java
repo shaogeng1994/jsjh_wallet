@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -91,6 +92,7 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
     private String bankUrl;
     private View bottomView;
     private ListView bottomListView;
+    private Map<String,Integer> map = new HashMap<>();
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
@@ -101,6 +103,7 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
         mPresenter.mode(check);
         initView();
         mPresenter.PayOrder(orderId);
+        mPresenter.getBankImg();
     }
 
     @Override
@@ -123,7 +126,7 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
         selectBankLayout = (LinearLayout) findViewById(R.id.pay_online_selectbank);
         bankNameTV = (TextView) findViewById(R.id.pay_online_bankname);
         bankImg = (ImageView) findViewById(R.id.pay_online_bankimg);
-        bankTV = (TextView) findViewById(R.id.pay_online_banktv);
+        bankTV = (TextView) findViewById(R.id.pay_online_banktype);
         phoneLayout = (LinearLayout) findViewById(R.id.pay_online_phonelayout);
         bottomView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_banklist,bottomSheetLayout,false);
         bottomListView = (ListView) bottomView.findViewById(R.id.bottomsheet_banklist);
@@ -133,16 +136,16 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
             setTitle("快捷支付");
             codeLayout.setVisibility(View.VISIBLE);
             bankLayout.setVisibility(View.VISIBLE);
-            bankImg.setBackgroundResource(R.mipmap.js_img_quick);
-            bankTV.setText("快捷支付");
+//            bankImg.setBackgroundResource(R.mipmap.js_img_quick);
+//            bankTV.setText("快捷支付");
         } else if (check == 2) {
             setTitle("储蓄卡");
             bankLayout.setVisibility(View.VISIBLE);
             phoneLayout.setVisibility(View.GONE);
         } else if (check == 3) {
             setTitle("信用卡");
-            bankImg.setBackgroundResource(R.mipmap.js_img_credit);
-            bankTV.setText("信用卡");
+//            bankImg.setBackgroundResource(R.mipmap.js_img_credit);
+//            bankTV.setText("信用卡");
             bankLayout.setVisibility(View.VISIBLE);
             phoneLayout.setVisibility(View.GONE);
 
@@ -248,6 +251,7 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
                     phoneTV.setText(mQuickPayment.getTelephone());
                 }
                 bankNameTV.setText(mQuickPayment.getBankname());
+                bankTV.setText(mQuickPayment.getCardtype());
                 submitTV.setBackgroundResource(R.drawable.shape_corner_btn_red);
                 bottomSheetLayout.dismissSheet();
             }
@@ -285,6 +289,8 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
         this.mQuickPayment = quickPayment;
         bankNameTV.setText(mQuickPayment.getBankname());
         bankCode = mQuickPayment.getBankcode();
+        bankTV.setText(mQuickPayment.getCardtype());
+        bankImg.setBackgroundResource(map.get(mQuickPayment.getBankname()));
     }
 
     @Override
@@ -295,6 +301,11 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
     @Override
     public void getOrderFailure() {
         finish();
+    }
+
+    @Override
+    public void getBankImgSuccess(Map map) {
+        this.map = map;
     }
 
 
@@ -337,13 +348,14 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             QuickPayment quickPayment = quickPayments.get(position);
-            viewHolder.dailylimitTV.setText(quickPayment.getDailylimit());
+            viewHolder.dailylimitTV.setText(quickPayment.getDailylimit().equals("0")?"无限制":quickPayment.getDailylimit());
             viewHolder.typeTV.setText(quickPayment.getCardtype());
-            viewHolder.singlequotaTV.setText(quickPayment.getSinglequota());
+            viewHolder.singlequotaTV.setText(quickPayment.getSinglequota().equals("0")?"无限制":quickPayment.getSinglequota());
             viewHolder.nameTV.setText(quickPayment.getBankname());
-            if(!bankUrl.equals("")){
-                MVolley.getInstance(context).loadImageByVolley(viewHolder.bankImg,bankUrl+quickPayment.getBankcode()+".jpg");
-            }
+//            if(!bankUrl.equals("")){
+//                MVolley.getInstance(context).loadImageByVolley(viewHolder.bankImg,bankUrl+quickPayment.getBankcode()+".jpg");
+//            }
+            viewHolder.bankImg.setBackgroundResource(map.get(quickPayment.getBankname()));
             return convertView;
         }
 
