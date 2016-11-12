@@ -1,5 +1,7 @@
 package com.jsojs.mywalletmodule.contract;
 
+import com.jsojs.mywalletmodule.bean.PabBindCard;
+import com.jsojs.mywalletmodule.bean.Payment;
 import com.jsojs.mywalletmodule.bean.QuickPayment;
 import com.jsojs.mywalletmodule.bean.RechargeOrder;
 
@@ -22,18 +24,23 @@ public interface RechargePayContract {
         void payOnlineSuccess(String html);
         void doQuickPay();
         void doOnlinePay();
-        void selectBindBank(QuickPayment quickPayment);
+        void selectBindBank(PabBindCard pabBindCard);
         void noBindBank();
         void getOrderFailure();
         void getBankImgSuccess(Map banks);
+        void getPaymentInfoSuccess(Payment payment);
+        void getPaymentInfoFailure();
     }
     interface Presenter {
         void getCode(String orderNumber, String bindId, String bankCode);
         void mode(int i);
         void checkPayMode(int i);
-        void quickPay(String orderNumber, String bindId, String dateTime, String phoneCode);
+        void quickPay(String paymentSn, String bindId, String dateTime, String phoneCode);
         void onlinePay(String orderNumber, String plantBankId);
         void PayOrder(String orderId);
         void getBankImg();
+        void getPaymentInfo(String paymentSn);
+        void debitCardPay(String paymentSn,String plantBankId);
+        void creditCardPay(String paymentSn,String plantBankId);
     }
 }

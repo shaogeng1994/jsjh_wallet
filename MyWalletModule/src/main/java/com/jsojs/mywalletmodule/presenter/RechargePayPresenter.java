@@ -8,6 +8,8 @@ import com.jsojs.mywalletmodule.api.ResponseCallBack;
 import com.jsojs.mywalletmodule.api.WalletApi;
 import com.jsojs.mywalletmodule.api.WalletApiImpl;
 import com.jsojs.mywalletmodule.bean.DateTime;
+import com.jsojs.mywalletmodule.bean.MyRayResult;
+import com.jsojs.mywalletmodule.bean.Payment;
 import com.jsojs.mywalletmodule.bean.RechargeOrder;
 import com.jsojs.mywalletmodule.contract.RechargePayContract;
 import com.jsojs.mywalletmodule.modle.ApiResponse;
@@ -152,44 +154,172 @@ public class RechargePayPresenter implements RechargePayContract.Presenter {
 
     @Override
     public void PayOrder(String orderId) {
-        if(TextUtils.isEmpty(orderId)){
-            view.showToast("找不到订单号");
+//        if(TextUtils.isEmpty(orderId)){
+//            view.showToast("找不到订单号");
+//            return;
+//        }
+//        view.showLoading();
+//        mWalletApi.rechargePay(MyToken.getMyToken(context), orderId, new ResponseCallBack<RechargeOrder>() {
+//            @Override
+//            public void callBack(ApiResponse<RechargeOrder> response) {
+//                view.hideLoading();
+//                if(response.isTokenOut()) {
+//                    view.doTokenOut();
+//                    return;
+//                }
+//                if(response.isSuccess()) {
+//                    if(check == 1) {
+//                        if(response.getData().getParinfo()==null||response.getData().getParinfo().size()==0){
+//                            view.showToast("没有绑定银行卡，请用储蓄卡或信用卡支付");
+//                            view.noBindBank();
+//                            return;
+//                        }
+//                        view.selectBindBank(response.getData().getParinfo().get(0));
+//                    }else if(check == 2) {
+//                        view.selectBindBank(response.getData().getQuick_payment().get(0));
+//                    }else {
+//                        view.selectBindBank(response.getData().getQuick_payment().get(1));
+//                    }
+//                    view.getOrderSuccess(response.getData());
+//                }else {
+//                    view.showToast(response.getMsg());
+//                    view.getOrderFailure();
+//                }
+//            }
+//        });
+    }
+
+    @Override
+    public void getBankImg() {
+        view.getBankImgSuccess(map);
+    }
+
+    @Override
+    public void getPaymentInfo(String paymentSn) {
+        if(TextUtils.isEmpty(paymentSn)) {
+            view.showToast("找不到支付单号");
+            view.getPaymentInfoFailure();
             return;
         }
         view.showLoading();
-        mWalletApi.rechargePay(MyToken.getMyToken(context), orderId, new ResponseCallBack<RechargeOrder>() {
+        mWalletApi.queryPaymentInfo(MyToken.getMyToken(context), paymentSn, new ResponseCallBack<Payment>() {
             @Override
-            public void callBack(ApiResponse<RechargeOrder> response) {
+            public void callBack(ApiResponse<Payment> response) {
                 view.hideLoading();
                 if(response.isTokenOut()) {
                     view.doTokenOut();
                     return;
                 }
                 if(response.isSuccess()) {
-                    if(check == 1) {
-                        if(response.getData().getParinfo()==null||response.getData().getParinfo().size()==0){
-                            view.showToast("没有绑定银行卡，请用储蓄卡或信用卡支付");
-                            view.noBindBank();
-                            return;
+                    if(response.getPayment().getAllowpaymode().get(getModeFlag())!=null) {
+                        if(check == 1) {
+                            if(response.getPayment().getPabkjbindcardlist()==null||response.getPayment().getPabkjbindcardlist().size()==0){
+                                view.showToast("没有绑定银行卡，请用储蓄卡或信用卡支付");
+                                view.noBindBank();
+                                return;
+                            }
+                            view.selectBindBank(response.getPayment().getBankList().get(0));
+                        }else if(check == 2) {
+                            view.selectBindBank(response.getPayment().getBankList().get(0));
+                        }else {
+                            view.selectBindBank(response.getPayment().getBankList().get(1));
                         }
-                        view.selectBindBank(response.getData().getParinfo().get(0));
-                    }else if(check == 2) {
-                        view.selectBindBank(response.getData().getQuick_payment().get(0));
+                        view.getPaymentInfoSuccess(response.getPayment());
                     }else {
-                        view.selectBindBank(response.getData().getQuick_payment().get(1));
+                        switch (getModeFlag()) {
+                            case "2":
+                                view.showToast("不支持快捷支付");
+                                break;
+                            case "3":
+                                view.showToast("不支持储蓄卡支付");
+                                break;
+                            case "4":
+                                view.showToast("不支持信用卡支付");
+                                break;
+                        }
+                        view.getPaymentInfoFailure();
                     }
-                    view.getOrderSuccess(response.getData());
+
                 }else {
                     view.showToast(response.getMsg());
-                    view.getOrderFailure();
+                    view.getPaymentInfoFailure();
                 }
             }
         });
     }
 
     @Override
-    public void getBankImg() {
-        view.getBankImgSuccess(map);
+    public void debitCardPay(String paymentSn, String plantBankId) {
+        if(TextUtils.isEmpty(paymentSn)){
+            view.showToast("找不到订单");
+            return;
+        }
+        if(TextUtils.isEmpty(plantBankId)){
+            view.showToast("请选择银行");
+            return;
+        }
+
+        Map<String,String> map = new HashMap<>();
+        map.put("plantBankId",plantBankId);
+        view.showLoading();
+        mWalletApi.doPay(MyToken.getMyToken(context), paymentSn, "3", map, new ResponseCallBack<MyRayResult>() {
+            @Override
+            public void callBack(ApiResponse<MyRayResult> response) {
+                view.hideLoading();
+                if(response.isTokenOut()) {
+                    view.doTokenOut();
+                    return;
+                }
+                if(response.isSuccess()) {
+                    view.payOnlineSuccess(response.getData().getPayhtml());
+                }else {
+                    view.showToast(response.getMsg());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void creditCardPay(String paymentSn, String plantBankId) {
+        if(TextUtils.isEmpty(paymentSn)){
+            view.showToast("找不到订单");
+            return;
+        }
+        if(TextUtils.isEmpty(plantBankId)){
+            view.showToast("请选择银行");
+            return;
+        }
+
+        Map<String,String> map = new HashMap<>();
+        map.put("plantBankId",plantBankId);
+        view.showLoading();
+        mWalletApi.doPay(MyToken.getMyToken(context), paymentSn, "4", map, new ResponseCallBack<MyRayResult>() {
+            @Override
+            public void callBack(ApiResponse<MyRayResult> response) {
+                view.hideLoading();
+                if(response.isTokenOut()) {
+                    view.doTokenOut();
+                    return;
+                }
+                if(response.isSuccess()) {
+                    view.payOnlineSuccess(response.getData().getPayhtml());
+                }else {
+                    view.showToast(response.getMsg());
+                }
+            }
+        });
+    }
+
+    private String getModeFlag() {
+        switch (check) {
+            case 1:
+                return "2";
+            case 2:
+                return "3";
+            case 3:
+                return "4";
+        }
+        return "0";
     }
 
     private void pushBankImg(){

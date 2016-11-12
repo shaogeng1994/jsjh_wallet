@@ -14,6 +14,6 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        WalletManager.getInstance().setWalletConfig(new WalletConfig(com.jsojs.mywalletmodule.BuildConfig.URL_DEBUG,"1.0.4","1"));
+        WalletManager.getInstance().setWalletConfig(new WalletConfig("http://app.jiushangjiuhui.com:803/app/","1.0.5","1"));
     }
 }

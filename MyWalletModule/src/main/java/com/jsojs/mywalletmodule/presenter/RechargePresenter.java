@@ -11,6 +11,8 @@ import com.jsojs.mywalletmodule.contract.RechargeContract;
 import com.jsojs.mywalletmodule.modle.ApiResponse;
 import com.jsojs.mywalletmodule.util.MyToken;
 
+import java.util.Map;
+
 /**
  * Created by root on 16-10-26.
  */
@@ -38,16 +40,16 @@ public class RechargePresenter implements RechargeContract.Presenter {
             return;
         }
         view.showLoading();
-        mWalletApi.rechargeAdd(MyToken.getMyToken(context), amount, new ResponseCallBack<RechargeOrder>() {
+        mWalletApi.rechargeAdd(MyToken.getMyToken(context), amount, new ResponseCallBack<Map<String,String>>() {
             @Override
-            public void callBack(ApiResponse<RechargeOrder> response) {
+            public void callBack(ApiResponse<Map<String,String>> response) {
                 view.hideLoading();
                 if(response.isTokenOut()){
                     view.doTokenOut();
                     return;
                 }
                 if(response.isSuccess()) {
-                    view.submitSuccess(response.getData());
+                    view.submitSuccess(response.getData().get("payment_sn"));
                 }else {
                     view.showToast(response.getMsg());
                 }

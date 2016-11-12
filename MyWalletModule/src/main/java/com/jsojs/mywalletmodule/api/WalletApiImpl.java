@@ -17,6 +17,8 @@ import com.jsojs.mywalletmodule.bean.AddBankResult;
 import com.jsojs.mywalletmodule.bean.BankList;
 import com.jsojs.mywalletmodule.bean.BindBankList;
 import com.jsojs.mywalletmodule.bean.DateTime;
+import com.jsojs.mywalletmodule.bean.MyRayResult;
+import com.jsojs.mywalletmodule.bean.Payment;
 import com.jsojs.mywalletmodule.bean.RechargeOrder;
 import com.jsojs.mywalletmodule.bean.SerialNo;
 import com.jsojs.mywalletmodule.bean.WalletConfig;
@@ -304,7 +306,7 @@ public class WalletApiImpl implements WalletApi {
     }
 
     @Override
-    public void rechargeAdd(String token, String amount, final ResponseCallBack<RechargeOrder> responseCallBack) {
+    public void rechargeAdd(String token, String amount, final ResponseCallBack<Map<String,String>> responseCallBack) {
 
         final HashMap<String,String> map = getCommonMap();
         map.put("action",RECHARGE_ADD);
@@ -313,7 +315,7 @@ public class WalletApiImpl implements WalletApi {
         StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                ApiResponse<RechargeOrder> response = JSON.parseObject(s,new TypeReference<ApiResponse<RechargeOrder>>(){});
+                ApiResponse<Map<String,String>> response = JSON.parseObject(s,new TypeReference<ApiResponse<Map<String,String>>>(){});
                 responseCallBack.callBack(response);
             }
         }, new Response.ErrorListener() {
@@ -421,7 +423,6 @@ public class WalletApiImpl implements WalletApi {
 
     @Override
     public void rechargeToPabPay(String token, String orderNumber, String plantBankId, final ResponseCallBack<String> responseCallBack) {
-
         final HashMap<String,String> map = getCommonMap();
         map.put("action",RECHARGE_TO_PAB_PAY);
         map.put("token",token);
@@ -452,6 +453,71 @@ public class WalletApiImpl implements WalletApi {
         };
         addToRequest(request);
         MyLog.showLog("api",RECHARGE_TO_PAB_PAY);
+    }
+
+    @Override
+    public void queryPaymentInfo(String token, String paymentSn, final ResponseCallBack<Payment> responseCallBack) {
+        final HashMap<String,String> map = getCommonMap();
+        map.put("action",QUERY_PAYMENT_INFO);
+        map.put("token",token);
+        map.put("payment_sn",paymentSn);
+        StringRequest request = new StringRequest(REQUEST_METHOD, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                ApiResponse<Payment> response = JSON.parseObject(s,new TypeReference<ApiResponse<Payment>>(){});
+                responseCallBack.callBack(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                getRequestError(error,responseCallBack);
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return map;
+            }
+        };
+        addToRequest(request);
+        MyLog.showLog("api",QUERY_PAYMENT_INFO);
+    }
+
+    @Override
+    public void doPay(String token, String paymentSn, final String payType, Map<String, String> payMap, final ResponseCallBack<MyRayResult> responseCallBack) {
+        final HashMap<String,String> map = getCommonMap();
+        map.put("action",DO_PAY);
+        map.put("token",token);
+        map.put("payment_sn",paymentSn);
+        map.put("paytype",payType);
+        map.putAll(payMap);
+        StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                ApiResponse<MyRayResult> response;
+                if(payType.equals("3")||payType.equals("4")||payType.equals("5")){
+                    response = JSON.parseObject(s,new TypeReference<ApiResponse<MyRayResult>>(){});
+                }else {
+                    ApiResponse<String> response2 = JSON.parseObject(s,new TypeReference<ApiResponse<String>>(){});
+                    response = new ApiResponse<>();
+                    response.setCode(response2.getCode());
+                    response.setMsg(response2.getMsg());
+                }
+                responseCallBack.callBack(response);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                getRequestError(volleyError,responseCallBack);
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return map;
+            }
+        };
+        addToRequest(request);
+        MyLog.showLog("api",DO_PAY);
     }
 
 

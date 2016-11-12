@@ -15,7 +15,7 @@ public class WalletManager {
 
     private WalletManager(){
         this.isDebug = false;
-        this.walletConfig = new WalletConfig(BuildConfig.URL,"1.0.4","1");
+        this.walletConfig = new WalletConfig("http://app.jiushangjiuhui.com:803/app/","1.0.4","1");
     }
 
     public static WalletManager getInstance(){

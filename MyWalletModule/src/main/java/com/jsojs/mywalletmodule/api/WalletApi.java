@@ -4,9 +4,13 @@ import com.jsojs.mywalletmodule.bean.AddBankResult;
 import com.jsojs.mywalletmodule.bean.BankList;
 import com.jsojs.mywalletmodule.bean.BindBankList;
 import com.jsojs.mywalletmodule.bean.DateTime;
+import com.jsojs.mywalletmodule.bean.MyRayResult;
+import com.jsojs.mywalletmodule.bean.Payment;
 import com.jsojs.mywalletmodule.bean.RechargeOrder;
 import com.jsojs.mywalletmodule.bean.SerialNo;
 import com.jsojs.mywalletmodule.bean.WalletMsg;
+
+import java.util.Map;
 
 /**
  * Created by root on 16-10-24.
@@ -20,96 +24,106 @@ public interface WalletApi {
      * 2 独立
      * 3 酒商云
      */
-    public final static String SOURCE = "1";
+    String SOURCE = "1";
 
     /**
      * 操作系统
      * 1 IOS
      * 2 ANDROID
      */
-    public final static String SYSVERSION = "2";
+    String SYSVERSION = "2";
 
     /**
      * 版本号
      */
-    public final static String APPVERSION = "1.0.4";
+    String APPVERSION = "1.0.4";
 
     /**
      * 查询钱包
      */
-    public final static String QUERY_WALLET = "queryWallet";
+    String QUERY_WALLET = "queryWallet";
 
     /**
      * 查询绑定银行卡
      */
-    public final static String QUERY_BIND_BANK_LIST = "queryBindBankList";
+    String QUERY_BIND_BANK_LIST = "queryBindBankList";
 
     /**
      * 查询银行信息
      */
-    public final static String QUERY_BANK_LIST = "queryBankList";
+    String QUERY_BANK_LIST = "queryBankList";
 
     /**
      * 绑定银行验证码获取
      */
-    public final static String BIND_BANK_CODE = "bindBankCode";
+    String BIND_BANK_CODE = "bindBankCode";
 
     /**
      * 添加绑定银行卡
      */
-    public final static String ADD_BIND_BANK = "addBingBank";
+    String ADD_BIND_BANK = "addBingBank";
     /**
      *移除绑定银行卡
      */
-    public final static String DEL_BIND_BANK = "delBindBank";
+    String DEL_BIND_BANK = "delBindBank";
     /**
      * 提现短信验证码
      */
-    public final static String WITHDRAWALS_CODE = "withdrawalsCode";
+    String WITHDRAWALS_CODE = "withdrawalsCode";
     /**
      * 提现
      */
-    public final static String WITHDRAWALS = "withdrawals";
+    String WITHDRAWALS = "withdrawals";
     /**
      * 充值订单创建
      */
-    public final static String RECHARGE_ADD = "rechargeAdd";
+    String RECHARGE_ADD = "rechargeAdd";
 
     /**
      * 查询充值订单
      */
-    public final static String RECHARGE_PAY = "rechargePay";
+    String RECHARGE_PAY = "rechargePay";
     /**
      * 快捷支付验证码获取
      */
-    public final static String RECHARGE_PAB_CODE = "rechargePabCode";
+    String RECHARGE_PAB_CODE = "rechargePabCode";
     /**
      * 快捷支付付款
      */
-    public final static String RECHARGE_PAB_PAY = "rechargePabPay";
+    String RECHARGE_PAB_PAY = "rechargePabPay";
     /**
      * 在线支付跳转
      */
-    public final static String RECHARGE_TO_PAB_PAY = "rechargeToPabPay";
+    String RECHARGE_TO_PAB_PAY = "rechargeToPabPay";
+
+    /**
+     * 查询收银台
+     */
+    String QUERY_PAYMENT_INFO = "queryPaymentInfo";
+
+    /**
+     * 1.0.5后的支付借口
+     */
+    String DO_PAY = "dopay";
 
 
     /**
      * @param token token
      * @param responseCallBack   回调监听
      */
-    public void queryWallet(String token, ResponseCallBack<WalletMsg> responseCallBack);
+    void queryWallet(String token, ResponseCallBack<WalletMsg> responseCallBack);
 
     /**
      * @param token token
      * @param responseCallBack   回调监听
      */
-    public void queryBindBankList(String token, ResponseCallBack<BindBankList> responseCallBack);
+    void queryBindBankList(String token, ResponseCallBack<BindBankList> responseCallBack);
 
     /**
      * @param token token
      * @param responseCallBack   回调监听
      */
-    public void queryBankList(String token, ResponseCallBack<BankList> responseCallBack);
+    void queryBankList(String token, ResponseCallBack<BankList> responseCallBack);
 
     /**
      * @param token token
@@ -121,7 +135,7 @@ public interface WalletApi {
      * @param mobile    手机号码
      * @param responseCallBack   回调监听
      */
-    public void bindBankCode(String token,String custName,String custId,String bankCard,String bankCode,String bankName,String mobile,ResponseCallBack<String> responseCallBack);
+    void bindBankCode(String token,String custName,String custId,String bankCard,String bankCode,String bankName,String mobile,ResponseCallBack<String> responseCallBack);
 
 
     /**
@@ -135,14 +149,14 @@ public interface WalletApi {
      * @param smsCode   验证码
      * @param responseCallBack  回调监听
      */
-    public void addBindBank(String token, String custName, String custId, String bankCard, String bankCode, String bankName, String mobile, String smsCode, ResponseCallBack<AddBankResult> responseCallBack);
+    void addBindBank(String token, String custName, String custId, String bankCard, String bankCode, String bankName, String mobile, String smsCode, ResponseCallBack<AddBankResult> responseCallBack);
 
     /**
      * @param token token
      * @param id    绑定ID
      * @param responseCallBack   回调监听
      */
-    public void delBindBank(String token,String id,ResponseCallBack responseCallBack);
+    void delBindBank(String token,String id,ResponseCallBack responseCallBack);
 
     /**
      * @param token token
@@ -150,7 +164,7 @@ public interface WalletApi {
      * @param amount    提现金额
      * @param responseCallBack   回调监听
      */
-    public void withdrawalsCode(String token,String cardId,String amount,ResponseCallBack<SerialNo> responseCallBack);
+    void withdrawalsCode(String token,String cardId,String amount,ResponseCallBack<SerialNo> responseCallBack);
 
     /**
      * @param token token
@@ -159,21 +173,21 @@ public interface WalletApi {
      * @param smsCode   验证码
      * @param responseCallBack   回调监听
      */
-    public void withdrawals(String token,String cardId,String serialNo,String smsCode,ResponseCallBack responseCallBack);
+    void withdrawals(String token,String cardId,String serialNo,String smsCode,ResponseCallBack responseCallBack);
 
     /**
      * @param token token
      * @param amount    金额
      * @param responseCallBack   回调监听
      */
-    public void rechargeAdd(String token, String amount, ResponseCallBack<RechargeOrder> responseCallBack);
+    void rechargeAdd(String token, String amount, ResponseCallBack<Map<String,String>> responseCallBack);
 
     /**
      * @param token token
      * @param orderId   订单号
      * @param responseCallBack  回调监听
      */
-    public void rechargePay(String token,String orderId,ResponseCallBack<RechargeOrder> responseCallBack);
+    void rechargePay(String token,String orderId,ResponseCallBack<RechargeOrder> responseCallBack);
 
     /**
      * @param token token
@@ -182,7 +196,7 @@ public interface WalletApi {
      * @param bankCode  银行卡代码
      * @param responseCallBack   回调监听
      */
-    public void rechargePabCode(String token, String orderNumber, String bindId, String bankCode, ResponseCallBack<DateTime> responseCallBack);
+    void rechargePabCode(String token, String orderNumber, String bindId, String bankCode, ResponseCallBack<DateTime> responseCallBack);
 
     /**
      * @param token token
@@ -192,7 +206,7 @@ public interface WalletApi {
      * @param phoneCode 验证码
      * @param responseCallBack   回调监听
      */
-    public void rechargePabPay(String token,String orderNumber,String bindId,String dateTime,String phoneCode,ResponseCallBack responseCallBack);
+    void rechargePabPay(String token,String orderNumber,String bindId,String dateTime,String phoneCode,ResponseCallBack responseCallBack);
 
     /**
      * @param token token
@@ -200,6 +214,23 @@ public interface WalletApi {
      * @param plantBankId   银行卡代码
      * @param responseCallBack   回调监听
      */
-    public void rechargeToPabPay(String token,String orderNumber,String plantBankId,ResponseCallBack<String> responseCallBack);
+    void rechargeToPabPay(String token,String orderNumber,String plantBankId,ResponseCallBack<String> responseCallBack);
+
+
+    /**
+     * @param token token
+     * @param paymentSn     支付单号
+     * @param responseCallBack  回调监听
+     */
+    void queryPaymentInfo(String token,String paymentSn,ResponseCallBack<Payment> responseCallBack);
+
+    /**
+     * @param token token
+     * @param paymentSn 支付单号
+     * @param payType   支付类型
+     * @param payMap    更多参数
+     * @param responseCallBack  回调监听
+     */
+    void doPay(String token,String paymentSn,String payType,Map<String,String> payMap,ResponseCallBack<MyRayResult> responseCallBack);
 
 }

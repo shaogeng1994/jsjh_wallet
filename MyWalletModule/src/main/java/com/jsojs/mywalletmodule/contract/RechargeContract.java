@@ -12,7 +12,7 @@ public interface RechargeContract {
         void hideLoading();
         void showToast(String msg);
         void doTokenOut();
-        void submitSuccess(RechargeOrder rechargeOrder);
+        void submitSuccess(String paymentSn);
     }
     interface Presenter {
         void submitOrder(String amount);

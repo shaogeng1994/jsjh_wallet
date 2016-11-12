@@ -10,8 +10,17 @@ public class ApiResponse<T> implements Serializable {
     private String code;
     private T data;
     private T info;
+    private T payment;
     private String msg;
     private String ret;
+
+    public T getPayment() {
+        return payment;
+    }
+
+    public void setPayment(T payment) {
+        this.payment = payment;
+    }
 
     public String getCode() {
         return code;

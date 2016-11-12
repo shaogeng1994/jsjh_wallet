@@ -50,7 +50,7 @@ public class RechargeActivity extends BaseActivity implements RechargeContract.V
         amountET = (EditText) findViewById(R.id.recharge_amount);
         submitTV = (TextView) findViewById(R.id.recharge_submit);
         balanceTextView = (TextView) findViewById(R.id.recharge_balance);
-        radioButton1.setChecked(true);
+        radioButton2.setChecked(true);
 
 
         submitTV.setOnClickListener(new View.OnClickListener() {
@@ -98,9 +98,9 @@ public class RechargeActivity extends BaseActivity implements RechargeContract.V
     }
 
     @Override
-    public void submitSuccess(RechargeOrder rechargeOrder) {
+    public void submitSuccess(String paymentSn) {
         Intent intent = new Intent(getApplicationContext(),RechargePayActivity.class);
-        intent.putExtra("id",rechargeOrder.getOrder_id());
+        intent.putExtra("paymentSn",paymentSn);
         intent.putExtra("check",getCheck());
         startActivityForResult(intent,REQUEST_FOR_RECHARGEPAY);
     }

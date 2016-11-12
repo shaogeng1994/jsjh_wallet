@@ -22,7 +22,7 @@ import com.jsojs.mywalletmodule.util.WalletManager;
 public class MainActivity extends AppCompatActivity {
     private Button button,button2;
     private WalletApi mWalletApi;
-    private String token = "484039123ad37e8287eaa396a17558d7705b13";
+    private String token = "db3b78cf725b18376d0c2740b3008c8c0a634e";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                WalletManager.getInstance().setWalletConfig(new WalletConfig(BuildConfig.URL,"1.0.4","1"));
+                WalletManager.getInstance().setWalletConfig(new WalletConfig("http://app.jiushangjiuhui.com:803/app/","1.0.5","1"));
                 Intent intent = new Intent(MainActivity.this,MainActivity.class);
                 startActivity(intent);
                 finish();

@@ -22,6 +22,8 @@ import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.jsojs.baselibrary.util.MyToast;
 import com.jsojs.baselibrary.volley.MVolley;
 import com.jsojs.mywalletmodule.R;
+import com.jsojs.mywalletmodule.bean.PabBindCard;
+import com.jsojs.mywalletmodule.bean.Payment;
 import com.jsojs.mywalletmodule.bean.QuickPay;
 import com.jsojs.mywalletmodule.bean.QuickPayOrder;
 import com.jsojs.mywalletmodule.bean.QuickPayment;
@@ -81,17 +83,18 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
     private TimerTask task;
     private BottomSheetLayout bottomSheetLayout;
     private LinearLayout selectBankLayout;
-    private QuickPayment mQuickPayment;
+    private PabBindCard mBank;
     private ImageView bankImg;
     private TextView bankTV;
     private String BindId;
     private String bankCode;
     private String dateTime;
-    private String orderId;
+    private String paymentSn;
     private RechargePayContract.Presenter mPresenter;
     private String bankUrl;
     private View bottomView;
     private ListView bottomListView;
+    private Payment payment;
     private Map<String,Integer> map = new HashMap<>();
 
     @Override
@@ -99,10 +102,11 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
         mPresenter = new RechargePayPresenter(this,this);
         setContentView(R.layout.wallet_activity_pay_online);
         check = getIntent().getIntExtra("check",0);
-        orderId = getIntent().getStringExtra("id");
+        paymentSn = getIntent().getStringExtra("paymentSn");
         mPresenter.mode(check);
         initView();
-        mPresenter.PayOrder(orderId);
+//        mPresenter.PayOrder(orderId);
+        mPresenter.getPaymentInfo(paymentSn);
         mPresenter.getBankImg();
     }
 
@@ -163,14 +167,19 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
         getCodeTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.getCode(idTV.getText().toString(),mQuickPayment.getBindId(),mQuickPayment.getBankcode());
+                mPresenter.getCode(idTV.getText().toString(),mBank.getBindId(),mBank.getBankcode());
 
             }
         });
         submitTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.checkPayMode(check);
+//                mPresenter.checkPayMode(check);
+                if(check==2) {
+                    mPresenter.debitCardPay(paymentSn,mBank.getBankcode());
+                }else if(check==3) {
+                    mPresenter.creditCardPay(paymentSn,mBank.getBankcode());
+                }
             }
         });
     }
@@ -219,43 +228,43 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
 
     @Override
     public void getOrderSuccess(RechargeOrder rechargeOrder) {
-        idTV.setText(rechargeOrder.getOrderNumber());
-        amountTV.setText(rechargeOrder.getPay_amount());
-        bankUrl = rechargeOrder.getBank_baseUrl();
-        List<QuickPayment> quickPays = rechargeOrder.getParinfo();
-        List<QuickPayment> quickPays1 = new ArrayList<>();
-        List<QuickPayment> quickPays2 = new ArrayList<>();
-        List<QuickPayment> quickPays3 = rechargeOrder.getQuick_payment();
-        for(int i=0;i<quickPays3.size();i++){
-            if(quickPays3.get(i).getCardtype().equals("借记卡"))quickPays1.add(quickPays3.get(i));
-            else quickPays2.add(quickPays3.get(i));
-
-        }
-        final ListViewAdapter adapter;
-        if(check==2){
-            adapter = new ListViewAdapter(this,quickPays1);
-        }else if(check==3){
-            adapter = new ListViewAdapter(this,quickPays2);
-        }else{
-            adapter = new ListViewAdapter(this,quickPays);
-        }
-
-        bottomListView.setAdapter(adapter);
-        bottomListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mQuickPayment = (QuickPayment) adapter.getItem(position);
-                if(check==1) {
-                    BindId = mQuickPayment.getBindId();
-                    bankCode = mQuickPayment.getBankcode();
-                    phoneTV.setText(mQuickPayment.getTelephone());
-                }
-                bankNameTV.setText(mQuickPayment.getBankname());
-                bankTV.setText(mQuickPayment.getCardtype());
-                submitTV.setBackgroundResource(R.drawable.shape_corner_btn_red);
-                bottomSheetLayout.dismissSheet();
-            }
-        });
+//        idTV.setText(rechargeOrder.getOrderNumber());
+//        amountTV.setText(rechargeOrder.getPay_amount());
+//        bankUrl = rechargeOrder.getBank_baseUrl();
+//        List<QuickPayment> quickPays = rechargeOrder.getParinfo();
+//        List<QuickPayment> quickPays1 = new ArrayList<>();
+//        List<QuickPayment> quickPays2 = new ArrayList<>();
+//        List<QuickPayment> quickPays3 = rechargeOrder.getQuick_payment();
+//        for(int i=0;i<quickPays3.size();i++){
+//            if(quickPays3.get(i).getCardtype().equals("借记卡"))quickPays1.add(quickPays3.get(i));
+//            else quickPays2.add(quickPays3.get(i));
+//
+//        }
+//        final ListViewAdapter adapter;
+//        if(check==2){
+//            adapter = new ListViewAdapter(this,quickPays1);
+//        }else if(check==3){
+//            adapter = new ListViewAdapter(this,quickPays2);
+//        }else{
+//            adapter = new ListViewAdapter(this,quickPays);
+//        }
+//
+//        bottomListView.setAdapter(adapter);
+//        bottomListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                mQuickPayment = (QuickPayment) adapter.getItem(position);
+//                if(check==1) {
+//                    BindId = mQuickPayment.getBindId();
+//                    bankCode = mQuickPayment.getBankcode();
+//                    phoneTV.setText(mQuickPayment.getTelephone());
+//                }
+//                bankNameTV.setText(mQuickPayment.getBankname());
+//                bankTV.setText(mQuickPayment.getCardtype());
+//                submitTV.setBackgroundResource(R.drawable.shape_corner_btn_red);
+//                bottomSheetLayout.dismissSheet();
+//            }
+//        });
     }
 
     @Override
@@ -276,21 +285,21 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
 
     @Override
     public void doQuickPay() {
-        mPresenter.quickPay(idTV.getText().toString(),mQuickPayment.getBindId(),dateTime,codeEdi.getText().toString());
+//        mPresenter.quickPay(idTV.getText().toString(),mQuickPayment.getBindId(),dateTime,codeEdi.getText().toString());
     }
 
     @Override
     public void doOnlinePay() {
-        mPresenter.onlinePay(idTV.getText().toString(),mQuickPayment.getBankcode());
+//        mPresenter.onlinePay(idTV.getText().toString(),mQuickPayment.getBankcode());
     }
 
     @Override
-    public void selectBindBank(QuickPayment quickPayment) {
-        this.mQuickPayment = quickPayment;
-        bankNameTV.setText(mQuickPayment.getBankname());
-        bankCode = mQuickPayment.getBankcode();
-        bankTV.setText(mQuickPayment.getCardtype());
-        bankImg.setBackgroundResource(map.get(mQuickPayment.getBankname()));
+    public void selectBindBank(PabBindCard pabBindCard) {
+        this.mBank = pabBindCard;
+        bankNameTV.setText(mBank.getBankname());
+        bankCode = mBank.getBankcode();
+        bankTV.setText(mBank.getCardtype());
+        bankImg.setBackgroundResource(map.get(mBank.getBankname()));
     }
 
     @Override
@@ -308,11 +317,58 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
         this.map = map;
     }
 
+    @Override
+    public void getPaymentInfoSuccess(Payment payment) {
+        this.payment = payment;
+
+        idTV.setText(payment.getPayment_sn());
+        amountTV.setText(payment.getPayamount());
+        List<PabBindCard> quickPays = payment.getPabkjbindcardlist();
+        List<PabBindCard> quickPays1 = new ArrayList<>();
+        List<PabBindCard> quickPays2 = new ArrayList<>();
+        List<PabBindCard> quickPays3 = payment.getBankList();
+        for(int i=0;i<quickPays3.size();i++){
+            if(quickPays3.get(i).getCardtype().equals("借记卡"))quickPays1.add(quickPays3.get(i));
+            else quickPays2.add(quickPays3.get(i));
+
+        }
+        final ListViewAdapter adapter;
+        if(check==2){
+            adapter = new ListViewAdapter(this,quickPays1);
+        }else if(check==3){
+            adapter = new ListViewAdapter(this,quickPays2);
+        }else{
+            adapter = new ListViewAdapter(this,quickPays);
+        }
+
+        bottomListView.setAdapter(adapter);
+        bottomListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mBank = (PabBindCard) adapter.getItem(position);
+                if(check==1) {
+                    BindId = mBank.getBindId();
+                    bankCode = mBank.getBankcode();
+                    phoneTV.setText(mBank.getTelephone());
+                }
+                bankNameTV.setText(mBank.getBankname());
+                bankTV.setText(mBank.getCardtype());
+                submitTV.setBackgroundResource(R.drawable.shape_corner_btn_red);
+                bottomSheetLayout.dismissSheet();
+            }
+        });
+    }
+
+    @Override
+    public void getPaymentInfoFailure() {
+        finish();
+    }
+
 
     private class ListViewAdapter extends BaseAdapter {
         private Context context;
-        private List<QuickPayment> quickPayments;
-        public ListViewAdapter(Context context,List<QuickPayment> quickPayments){
+        private List<PabBindCard> quickPayments;
+        public ListViewAdapter(Context context,List<PabBindCard> quickPayments){
             this.context = context;
             this.quickPayments = quickPayments;
         }
@@ -347,14 +403,11 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
             }else{
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            QuickPayment quickPayment = quickPayments.get(position);
+            PabBindCard quickPayment = quickPayments.get(position);
             viewHolder.dailylimitTV.setText(quickPayment.getDailylimit().equals("0")?"无限制":quickPayment.getDailylimit());
             viewHolder.typeTV.setText(quickPayment.getCardtype());
             viewHolder.singlequotaTV.setText(quickPayment.getSinglequota().equals("0")?"无限制":quickPayment.getSinglequota());
             viewHolder.nameTV.setText(quickPayment.getBankname());
-//            if(!bankUrl.equals("")){
-//                MVolley.getInstance(context).loadImageByVolley(viewHolder.bankImg,bankUrl+quickPayment.getBankcode()+".jpg");
-//            }
             viewHolder.bankImg.setBackgroundResource(map.get(quickPayment.getBankname()));
             return convertView;
         }
