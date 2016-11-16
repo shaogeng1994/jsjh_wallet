@@ -1,9 +1,11 @@
 package com.jsojs.mywalletmodule.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/7/20.
  */
-public class QuickPay {
+public class QuickPay implements Serializable {
     private String bankCode;
     private String bankName;
     private String cardType;

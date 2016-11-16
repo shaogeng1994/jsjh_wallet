@@ -1,9 +1,11 @@
 package com.jsojs.mywalletmodule.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/7/29.
  */
-public class UserInfo {
+public class UserInfo implements Serializable {
     private String baseNick;
     private String head;
     private String baseGender;

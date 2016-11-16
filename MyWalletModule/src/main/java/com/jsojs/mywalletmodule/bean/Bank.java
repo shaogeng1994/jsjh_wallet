@@ -1,9 +1,11 @@
 package com.jsojs.mywalletmodule.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/7/21.
  */
-public class Bank {
+public class Bank implements Serializable {
     private String bankCode;
     private String name;
     private String cardType;

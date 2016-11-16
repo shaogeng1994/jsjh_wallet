@@ -1,11 +1,12 @@
 package com.jsojs.mywalletmodule.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/7/20.
  */
-public class QuickPayOrder {
+public class QuickPayOrder implements Serializable {
     private String orderNumber;
     private String orderAmount;
     private String mobile;

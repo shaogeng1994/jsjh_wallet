@@ -196,7 +196,7 @@ public class WithdrawActivity extends BaseActivity implements WithdrawContract.V
 
     @Override
     public void withdrawSuccess() {
-        setResult(2001);
+        setResult(RESULT_OK);
         Intent intent = new Intent(this,WithdrawSuccessActivity.class);
         intent.putExtra("name",bankNameTV.getText().toString());
         intent.putExtra("end",bankCardTV.getText().toString());

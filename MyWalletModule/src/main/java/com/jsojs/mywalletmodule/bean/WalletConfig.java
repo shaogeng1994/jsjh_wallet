@@ -1,10 +1,12 @@
 package com.jsojs.mywalletmodule.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by root on 16-10-25.
  */
 
-public class WalletConfig {
+public class WalletConfig implements Serializable {
     private String url;
     private String appversion;
     private String source;

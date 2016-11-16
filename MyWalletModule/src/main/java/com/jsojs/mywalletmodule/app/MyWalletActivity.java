@@ -79,7 +79,7 @@ public class MyWalletActivity extends BaseActivity implements WalletContract.Vie
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_WITHDRAW && resultCode == 2001){
+        if(requestCode == REQUEST_WITHDRAW && resultCode == RESULT_OK){
             mPresenter.getWalletMsg();
         }
         if(requestCode == REQUEST_RECHARGE && resultCode == RESULT_OK){
@@ -115,6 +115,7 @@ public class MyWalletActivity extends BaseActivity implements WalletContract.Vie
     public void doTokenOut() {
         tokenOut();
     }
+
 
     @Override
     public void showToast(String msg) {
