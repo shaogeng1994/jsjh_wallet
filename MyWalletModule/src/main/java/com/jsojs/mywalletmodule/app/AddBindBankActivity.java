@@ -31,6 +31,7 @@ import com.jsojs.mywalletmodule.bean.Bank;
 import com.jsojs.mywalletmodule.bean.BankList;
 import com.jsojs.mywalletmodule.contract.AddBindBankContract;
 import com.jsojs.mywalletmodule.presenter.AddBindBankPresenter;
+import com.jsojs.mywalletmodule.util.ActivityStack;
 import com.jsojs.mywalletmodule.util.MyJson;
 import com.jsojs.mywalletmodule.util.MyToken;
 
@@ -292,5 +293,16 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
         private class Holder {
             ImageView imageView;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        bankTV.setOnClickListener(null);
+        getCodeTV.setOnClickListener(null);
+        submitTV.setOnClickListener(null);
+        if(bottomListView!=null)
+            bottomListView.setOnItemClickListener(null);
+        handler.removeCallbacksAndMessages(null);
     }
 }

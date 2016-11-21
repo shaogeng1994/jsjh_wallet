@@ -178,4 +178,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         sendBroadcast(intent);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityStack.getScreenManager().popActivity(this);
+        backButton.setOnClickListener(null);
+        if(option!=null)
+            option.setOnClickListener(null);
+        if(optionImage!=null)
+            optionImage.setOnClickListener(null);
+    }
 }

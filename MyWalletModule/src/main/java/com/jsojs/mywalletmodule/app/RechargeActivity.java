@@ -104,4 +104,10 @@ public class RechargeActivity extends BaseActivity implements RechargeContract.V
         intent.putExtra("check",getCheck());
         startActivityForResult(intent,REQUEST_FOR_RECHARGEPAY);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        submitTV.setOnClickListener(null);
+    }
 }

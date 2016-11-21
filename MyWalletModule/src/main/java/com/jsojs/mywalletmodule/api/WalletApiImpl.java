@@ -52,7 +52,7 @@ public class WalletApiImpl implements WalletApi {
 
     private WalletApiImpl(Context context) {
         if(queue == null){
-            this.context = context;
+            this.context = context.getApplicationContext();
             queue = Volley.newRequestQueue(context);
             mWalletManager = WalletManager.getInstance();
             mWalletConfig = mWalletManager.getWalletConfig();
@@ -526,6 +526,8 @@ public class WalletApiImpl implements WalletApi {
         commonMap.put("source",mWalletConfig.getSource());
         commonMap.put("appversion",mWalletConfig.getAppversion());
         commonMap.put("sysversion",SYSVERSION);
+        if(mWalletConfig.getOtherMap()!=null);
+            commonMap.putAll(mWalletConfig.getOtherMap());
         return commonMap;
     }
 

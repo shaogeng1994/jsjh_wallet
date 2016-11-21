@@ -90,8 +90,9 @@ public class MyWalletActivity extends BaseActivity implements WalletContract.Vie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityStack.getScreenManager().clearAllActivity();
-        mPresenter = null;
+        bankLayout.setOnClickListener(null);
+        rechargeLayout.setOnClickListener(null);
+        outLayout.setOnClickListener(null);
     }
 
     @Override

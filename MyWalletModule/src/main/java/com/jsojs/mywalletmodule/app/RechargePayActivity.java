@@ -427,4 +427,13 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        selectBankLayout.setOnClickListener(null);
+        getCodeTV.setOnClickListener(null);
+        submitTV.setOnClickListener(null);
+        bottomListView.setOnItemClickListener(null);
+        handler.removeCallbacksAndMessages(null);
+    }
 }

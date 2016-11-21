@@ -214,4 +214,13 @@ public class WithdrawActivity extends BaseActivity implements WithdrawContract.V
     public void getBankImgSuccess(int bankImg) {
         bankImageView.setBackgroundResource(bankImg);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getcodeTV.setOnClickListener(null);
+        submitTV.setOnClickListener(null);
+        bankLayout.setOnClickListener(null);
+        handler.removeCallbacksAndMessages(null);
+    }
 }

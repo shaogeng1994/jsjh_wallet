@@ -1,6 +1,7 @@
 package com.jsojs.mywalletmodule.bean;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Created by root on 16-10-25.
@@ -11,6 +12,7 @@ public class WalletConfig implements Serializable {
     private String appversion;
     private String source;
     private String sysversion;
+    private Map<String,String> otherMap;
 
     public WalletConfig() {
     }
@@ -19,6 +21,21 @@ public class WalletConfig implements Serializable {
         this.url = url;
         this.appversion = appversion;
         this.source = source;
+    }
+
+    public WalletConfig(String url, String appversion, String source,Map<String,String> otherMap) {
+        this.url = url;
+        this.appversion = appversion;
+        this.source = source;
+        this.otherMap = otherMap;
+    }
+
+    public Map<String, String> getOtherMap() {
+        return otherMap;
+    }
+
+    public void setOtherMap(Map<String, String> otherMap) {
+        this.otherMap = otherMap;
     }
 
     public String getUrl() {

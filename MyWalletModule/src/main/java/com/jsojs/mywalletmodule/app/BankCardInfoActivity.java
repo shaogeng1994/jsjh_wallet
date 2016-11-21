@@ -15,6 +15,7 @@ import com.jsojs.mywalletmodule.R;
 import com.jsojs.mywalletmodule.bean.BindBank;
 import com.jsojs.mywalletmodule.contract.BankCardInfoContract;
 import com.jsojs.mywalletmodule.presenter.BankCardInfoPresenter;
+import com.jsojs.mywalletmodule.util.ActivityStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -133,5 +134,12 @@ public class BankCardInfoActivity extends BaseActivity implements BankCardInfoCo
     @Override
     public void bankImg(Map<String, Integer> map) {
         this.map = map;
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        submitButton.setOnClickListener(null);
     }
 }

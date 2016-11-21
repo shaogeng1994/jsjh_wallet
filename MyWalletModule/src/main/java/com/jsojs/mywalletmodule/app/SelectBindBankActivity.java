@@ -124,4 +124,10 @@ public class SelectBindBankActivity extends BaseActivity {
         map.put("上海银行",R.mipmap.bank_bos);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(listView!=null)
+            listView.setOnItemClickListener(null);
+    }
 }

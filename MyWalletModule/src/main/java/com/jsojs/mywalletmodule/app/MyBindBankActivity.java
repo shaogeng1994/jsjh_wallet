@@ -169,6 +169,11 @@ public class MyBindBankActivity extends BaseActivity implements MyBindBankContra
         }
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        addLayout.setOnClickListener(null);
+        if(listView!=null)
+            listView.setOnItemClickListener(null);
+    }
 }
