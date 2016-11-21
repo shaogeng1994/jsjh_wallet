@@ -13,8 +13,7 @@
             android:layout_height="@dimen/x68"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/x70"
-            android:layout_margin="@dimen/x10"
-            android:background="@mipmap/bank_abc">
+            android:layout_margin="@dimen/x10">
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -48,15 +47,5 @@
                     android:textSize="@dimen/big_text_size"/>
             </RelativeLayout>
         </LinearLayout>
-        <TextView
-            android:id="@+id/bindbank_item_delete"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/x30"
-            android:text="解绑"
-            android:gravity="center"
-            android:textColor="#fff"
-            android:background="#f00"
-            android:textSize="@dimen/big_text_size"
-            android:visibility="gone"/>
     </LinearLayout>
 </LinearLayout>

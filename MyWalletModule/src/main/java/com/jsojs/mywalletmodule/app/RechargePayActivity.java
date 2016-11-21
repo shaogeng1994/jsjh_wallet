@@ -96,6 +96,7 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
     private ListView bottomListView;
     private Payment payment;
     private Map<String,Integer> map = new HashMap<>();
+    private ListViewAdapter adapter;
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
@@ -332,7 +333,6 @@ public class RechargePayActivity extends BaseActivity implements RechargePayCont
             else quickPays2.add(quickPays3.get(i));
 
         }
-        final ListViewAdapter adapter;
         if(check==2){
             adapter = new ListViewAdapter(this,quickPays1);
         }else if(check==3){

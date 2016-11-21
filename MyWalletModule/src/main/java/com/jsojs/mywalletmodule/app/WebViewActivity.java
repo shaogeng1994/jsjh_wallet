@@ -3,9 +3,11 @@ package com.jsojs.mywalletmodule.app;
 import android.app.Dialog;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -14,10 +16,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jsojs.mywalletmodule.R;
 
@@ -45,6 +44,23 @@ public class WebViewActivity extends BaseActivity {
     private Dialog dialog;
     private ActionBar actionBar;
     private ProgressBar progressBar;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 1:
+                    postDelayed(runnable,5000);
+                    break;
+            }
+        }
+    };
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            finish();
+        }
+    };
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +129,8 @@ public class WebViewActivity extends BaseActivity {
                 String wohleJS = "var title = $('#status');" +
                         "title.bind('DOMNodeInserted',function(e) {" +
                         "if($('#status').text().split('交易成功').length>0){" +
-                        "alert('交易成功，确定关闭');window.jsojsJSinterface.onSumResult(1);}" +
+                        "document.returnForm.submit();" +
+                        "window.jsojsJSinterface.onSumResult(1);}" +
                         "});";
                 view.loadUrl("javascript:function myFunction(){"+wohleJS+"}");
                 view.loadUrl("javascript:myFunction()");
@@ -133,9 +150,12 @@ public class WebViewActivity extends BaseActivity {
         public void onSumResult(int result) {
             Log.i("shao", "onSumResult result=" + result);
             if(result==1){
-                Toast.makeText(getApplicationContext(), "支付成功", Toast.LENGTH_LONG).show();
                 setResult(RESULT_OK);
-                finish();
+                handler.sendEmptyMessage(1);
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(WebViewActivity.this);
+                alertDialog.setMessage("支付成功\n页面将在5秒内关闭");
+                alertDialog.setCancelable(false);
+                alertDialog.show();
             }
         }
     }

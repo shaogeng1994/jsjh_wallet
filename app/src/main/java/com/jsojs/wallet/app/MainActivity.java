@@ -19,10 +19,13 @@ import com.jsojs.mywalletmodule.bean.WalletMsg;
 import com.jsojs.mywalletmodule.modle.ApiResponse;
 import com.jsojs.mywalletmodule.util.WalletManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
     private Button button,button2;
     private WalletApi mWalletApi;
-    private String token = "db3b78cf725b18376d0c2740b3008c8c0a634e";
+    private String token = "9c13ebc96f357d54006cd5e3e5eec9e6770596";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         button = (Button) findViewById(R.id.test_btn);
         button2 = (Button) findViewById(R.id.test_btn2);
+
+
+        final Map map = new HashMap();
+        map.put("supplier_id","1159");
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                WalletManager.getInstance().setWalletConfig(new WalletConfig("http://app.jiushangjiuhui.com:803/app/","1.0.5","1"));
+                WalletManager.getInstance().setWalletConfig(new WalletConfig("http://app.jiushangjiuhui.com:803/app/","1.0.5","2",map));
                 Intent intent = new Intent(MainActivity.this,MainActivity.class);
                 startActivity(intent);
                 finish();

@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.jsojs.baselibrary.util.MyToast;
@@ -62,7 +63,7 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
     private ImageView nameClearIV,idCardClearIV,cardClearIV;
     private int second = WAIT_TIME;
     private Timer timer;
-    private final Handler handler = new Handler(){
+    private Handler handler = new Handler(){
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
@@ -88,7 +89,17 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
     private View bottomView;
     private ListView bottomListView;
     private AddBindBankPresenter mAddBindBankPresenter;
-    private Map<String,Integer> map = new HashMap<>();
+    private static Map<String,Integer> map = new HashMap<>();
+    private ListViewAdapter listViewAdapter;
+    private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Bank bank = (Bank) listViewAdapter.getItem(position);
+            bankTV.setText(bank.getName());
+            bankCode = bank.getCode();
+            bottomSheetLayout.dismissSheet();
+        }
+    };
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
@@ -165,6 +176,10 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
             }
         });
 
+        listViewAdapter = new ListViewAdapter(this,null);
+        bottomListView.setAdapter(listViewAdapter);
+        bottomListView.setOnItemClickListener(onItemClickListener);
+
     }
 
 
@@ -199,17 +214,7 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
     public void showBankList(BankList bankList) {
         nameET.setText(bankList.getCustName());
         idCardET.setText(bankList.getCustId());
-        final ListViewAdapter listViewAdapter = new ListViewAdapter(this,bankList.getBankList());
-        bottomListView.setAdapter(listViewAdapter);
-        bottomListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Bank bank = (Bank) listViewAdapter.getItem(position);
-                bankTV.setText(bank.getName());
-                bankCode = bank.getCode();
-                bottomSheetLayout.dismissSheet();
-            }
-        });
+        listViewAdapter.setBanks(bankList.getBankList());
     }
 
     @Override
@@ -242,18 +247,27 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
         this.map = banks;
     }
 
-    private class ListViewAdapter extends BaseAdapter{
+    private static class ListViewAdapter extends BaseAdapter{
         private Context context;
         private List<Bank> banks;
         public ListViewAdapter(Context context,List<Bank> banks){
-            this.context = context;
+            this.context = context.getApplicationContext();
             this.banks = banks;
+        }
+
+        public List<Bank> getBanks() {
+            return banks;
+        }
+
+        public void setBanks(List<Bank> banks) {
+            this.banks = banks;
+            notifyDataSetChanged();
         }
 
         @Override
         public int getCount() {
             if (banks==null)
-            return 0;
+                return 0;
             return banks.size();
         }
 
@@ -269,29 +283,21 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-//            convertView = LayoutInflater.from(context).inflate(R.layout.bank_bottomsheet_item,null);
-//            TextView textView = (TextView) convertView.findViewById(R.id.bank_bottomsheet_itemname);
-//            NetworkImageView networkImageView = (NetworkImageView) convertView.findViewById(R.id.bank_bottomsheet_itemimg);
-//            textView.setText(banks.get(position).getName());
-//            networkImageView.setDefaultImageResId(R.color.colorGray);
-//            if(!banks.get(position).getBankUrl().equals("")||banks.get(position).getBankUrl()!=null){
-//                networkImageView.setImageUrl(banks.get(position).getBankUrl(),MVolley.getInstance(context).getImageLoader());
-//            }
             Holder holder;
             if(convertView==null) {
                 holder = new Holder();
-                convertView = LayoutInflater.from(context).inflate(R.layout.bind_bank_img_item,null);
+                convertView = LayoutInflater.from(context).inflate(R.layout.bind_bank_img_item,parent,false);
                 holder.imageView = (ImageView) convertView.findViewById(R.id.bind_bank_img_item_img);
                 convertView.setTag(holder);
             }else {
                 holder = (Holder) convertView.getTag();
             }
-            holder.imageView.setBackgroundResource(map.get(banks.get(position).getName()));
+            holder.imageView.setImageResource(map.get(banks.get(position).getName()));
             return convertView;
         }
 
-        private class Holder {
-            ImageView imageView;
+        private static class Holder {
+            public ImageView imageView;
         }
     }
 
@@ -301,8 +307,12 @@ public class AddBindBankActivity extends BaseActivity implements AddBindBankCont
         bankTV.setOnClickListener(null);
         getCodeTV.setOnClickListener(null);
         submitTV.setOnClickListener(null);
+        nameClearIV.setOnClickListener(null);
+        idCardClearIV.setOnClickListener(null);
+        cardClearIV.setOnClickListener(null);
         if(bottomListView!=null)
             bottomListView.setOnItemClickListener(null);
         handler.removeCallbacksAndMessages(null);
+        bottomListView.setAdapter(null);
     }
 }

@@ -109,7 +109,7 @@ public class MyBindBankActivity extends BaseActivity implements MyBindBankContra
         private Context context;
         private List<BindBank> bindBanks;
         public ListViewAdapter(Context context,List<BindBank> bindBanks){
-            this.context =context;
+            this.context =context.getApplicationContext();
             this.bindBanks = bindBanks;
         }
 
@@ -118,6 +118,15 @@ public class MyBindBankActivity extends BaseActivity implements MyBindBankContra
             if (bindBanks==null)
             return 0;
             return bindBanks.size();
+        }
+
+        public List<BindBank> getBindBanks() {
+            return bindBanks;
+        }
+
+        public void setBindBanks(List<BindBank> bindBanks) {
+            this.bindBanks = bindBanks;
+            notifyDataSetChanged();
         }
 
         @Override
@@ -132,22 +141,33 @@ public class MyBindBankActivity extends BaseActivity implements MyBindBankContra
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.bindbank_listview_item,null);
-            LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.bindbank_item_layout);
-            final TextView bankCardTV = (TextView) convertView.findViewById(R.id.bindbank_item_bankcard);
-            TextView bankNameTV = (TextView) convertView.findViewById(R.id.bindbank_item_bankname);
-            final TextView delete = (TextView) convertView.findViewById(R.id.bindbank_item_delete);
-            LinearLayout linearLayout = (LinearLayout) convertView.findViewById(R.id.bindbank_item_layout);
-            bankCardTV.setText(bindBanks.get(position).getBankcard());
-            bankNameTV.setText(bindBanks.get(position).getBankname());
+            Holder holder;
+            if(convertView==null) {
+                holder = new Holder();
+                convertView = LayoutInflater.from(context).inflate(R.layout.bindbank_listview_item,null);
+                holder.bankCardTV = (TextView) convertView.findViewById(R.id.bindbank_item_bankcard);
+                holder.bankNameTV = (TextView) convertView.findViewById(R.id.bindbank_item_bankname);
+                holder.linearLayout = (LinearLayout) convertView.findViewById(R.id.bindbank_item_layout);
+                convertView.setTag(holder);
+            }else {
+                holder = (Holder) convertView.getTag();
+            }
+
+            holder.bankCardTV.setText(bindBanks.get(position).getBankcard());
+            holder.bankNameTV.setText(bindBanks.get(position).getBankname());
             if(map.get(bindBanks.get(position).getBankname())!=null)
-            linearLayout.setBackgroundResource(map.get(bindBanks.get(position).getBankname()));
+                holder.linearLayout.setBackgroundResource(map.get(bindBanks.get(position).getBankname()));
             return convertView;
         }
 
         public void removeData(int position){
             bindBanks.remove(position);
             notifyDataSetChanged();
+        }
+
+        private class Holder {
+            public TextView bankCardTV,bankNameTV;
+            public LinearLayout linearLayout;
         }
 
 

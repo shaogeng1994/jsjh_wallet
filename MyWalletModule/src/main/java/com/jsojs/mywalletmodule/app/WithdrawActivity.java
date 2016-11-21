@@ -35,7 +35,7 @@ public class WithdrawActivity extends BaseActivity implements WithdrawContract.V
     private static int WAIT_TIME = 60;
     private int second = WAIT_TIME;
     private Timer timer;
-    private final Handler handler = new Handler(){
+    private Handler handler = new Handler(){
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
@@ -124,6 +124,7 @@ public class WithdrawActivity extends BaseActivity implements WithdrawContract.V
     }
 
     private void setTimer(){
+        if(task!=null)task.cancel();
         task = new TimerTask(){
             public void run() {
                 Message message = new Message();

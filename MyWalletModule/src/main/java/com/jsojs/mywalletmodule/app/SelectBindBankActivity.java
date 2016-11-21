@@ -30,6 +30,7 @@ public class SelectBindBankActivity extends BaseActivity {
     private ArrayList<BindBank> mBindBanks;
     private LinearLayout addLayout;
     private Map<String,Integer> map = new HashMap<>();
+    private ListViewAdapter listViewAdapter;
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class SelectBindBankActivity extends BaseActivity {
         addLayout.setVisibility(View.GONE);
 
 
-        final ListViewAdapter listViewAdapter = new ListViewAdapter(this,mBindBanks);
+        listViewAdapter = new ListViewAdapter(this,mBindBanks);
         listView.setAdapter(listViewAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -69,7 +70,7 @@ public class SelectBindBankActivity extends BaseActivity {
         private Context context;
         private ArrayList<BindBank> bindBanks;
         public ListViewAdapter(Context context,ArrayList<BindBank> bindBanks){
-            this.context =context;
+            this.context =context.getApplicationContext();
             this.bindBanks = bindBanks;
         }
 
