@@ -8,10 +8,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.jsojs.mywalletmodule.R;
+import com.jsojs.mywalletmodule.bean.WalletConfig;
 import com.jsojs.mywalletmodule.bean.WalletMsg;
 import com.jsojs.mywalletmodule.contract.WalletContract;
 import com.jsojs.mywalletmodule.presenter.WalletPresenter;
 import com.jsojs.mywalletmodule.util.ActivityStack;
+import com.jsojs.mywalletmodule.util.WalletManager;
+
 /**
  * Created by Administrator on 2016/7/27.
  */
@@ -35,6 +38,11 @@ public class MyWalletActivity extends BaseActivity implements WalletContract.Vie
         setContentView(R.layout.activity_my_wallet2);
         initView();
         mPresenter.getWalletMsg();
+
+        WalletConfig walletConfig = WalletManager.getInstance().getWalletConfig();
+        if("4".equals(walletConfig.getSource())) {
+            rechargeLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
