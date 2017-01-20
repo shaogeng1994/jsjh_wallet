@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorGray">
     <LinearLayout
+        android:id="@+id/my_wallet_bg"
         android:layout_width="match_parent"
         android:layout_height="@dimen/x178"
         android:background="@mipmap/wallet_topbg"

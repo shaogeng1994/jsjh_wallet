@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ public class MyWalletActivity extends BaseActivity implements WalletContract.Vie
     private ActionBar actionBar;
     private TextView money1TV,money2TV,money3TV;
     private RelativeLayout outLayout,bankLayout,rechargeLayout;
+    private LinearLayout backgroundLayout;
     private WalletContract.Presenter mPresenter;
 
     @Override
@@ -57,6 +59,13 @@ public class MyWalletActivity extends BaseActivity implements WalletContract.Vie
         outLayout = (RelativeLayout) findViewById(R.id.my_wallet_outmoney);
         bankLayout = (RelativeLayout) findViewById(R.id.my_wallet_bindbank);
         rechargeLayout = (RelativeLayout) findViewById(R.id.my_wallet_recharge);
+        backgroundLayout = (LinearLayout) findViewById(R.id.my_wallet_bg);
+
+        if("3".equals(WalletManager.getInstance().getWalletConfig().getSource())) {
+            backgroundLayout.setBackgroundResource(R.mipmap.wallet_topbg_blue);
+        }else {
+            backgroundLayout.setBackgroundResource(R.mipmap.wallet_topbg);
+        }
 
 
         bankLayout.setOnClickListener(new View.OnClickListener() {
