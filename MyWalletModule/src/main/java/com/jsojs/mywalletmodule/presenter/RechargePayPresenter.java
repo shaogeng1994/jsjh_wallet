@@ -211,20 +211,20 @@ public class RechargePayPresenter implements RechargePayContract.Presenter {
                     return;
                 }
                 if(response.isSuccess()) {
-                    if(response.getPayment().getAllowpaymode().get(getModeFlag())!=null) {
+                    if(response.getInfo().getAllowpaymode().get(getModeFlag())!=null) {
                         if(check == 1) {
-                            if(response.getPayment().getPabkjbindcardlist()==null||response.getPayment().getPabkjbindcardlist().size()==0){
+                            if(response.getInfo().getPabkjbindcardlist()==null||response.getInfo().getPabkjbindcardlist().size()==0){
                                 view.showToast("没有绑定银行卡，请用储蓄卡或信用卡支付");
                                 view.noBindBank();
                                 return;
                             }
-                            view.selectBindBank(response.getPayment().getBankList().get(0));
+                            view.selectBindBank(response.getInfo().getBankList().get(0));
                         }else if(check == 2) {
-                            view.selectBindBank(response.getPayment().getBankList().get(0));
+                            view.selectBindBank(response.getInfo().getBankList().get(0));
                         }else {
-                            view.selectBindBank(response.getPayment().getBankList().get(1));
+                            view.selectBindBank(response.getInfo().getBankList().get(1));
                         }
-                        view.getPaymentInfoSuccess(response.getPayment());
+                        view.getPaymentInfoSuccess(response.getInfo());
                     }else {
                         switch (getModeFlag()) {
                             case "2":
